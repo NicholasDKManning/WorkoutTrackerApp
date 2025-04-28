@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "ERNDAPP/1.0.0": {
+        "runtime": {
+          "ERNDAPP.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ERNDAPP/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
