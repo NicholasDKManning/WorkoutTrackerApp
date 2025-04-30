@@ -14,7 +14,7 @@ Authentication: ASP.NET Identity
 
 Deployment: Planned (Azure, Render, or Vercel + API backend)
 
-✅ Core Features (MVP)
+✅ Core Features
 User Authentication – Register/Login with secure sessions
 
 User Dashboard – View welcome message and workout history
@@ -32,6 +32,7 @@ Add notes for each workout session
 Workout History – View previously logged workouts with details
 
 📈 Development Timeline (Step-by-Step)
+
 ✅ Phase 1: Project Setup + User Authentication
 Set up ASP.NET Razor Pages project in Visual Studio
 
