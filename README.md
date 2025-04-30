@@ -1,5 +1,5 @@
-🏋️ ERND – Web-Based Workout Tracker (MVP)
-ERND is a full-stack web application I’m building to grow as an application developer. The goal is to create a mobile-style fitness app where users can log in, track workouts in detail, and view their workout history — all through a clean, responsive web interface.
+🏋️ Web-Based Workout Tracker (MVP)
+This is a full-stack web application I’m building to grow as an application developer. The goal is to create a mobile-style fitness app where users can log in, track workouts in detail, and view their workout history — all through a clean, responsive web interface.
 
 This is a long-term learning project, but the Minimum Viable Product (MVP) is being built in HOPEFULLY two weeks to allow for user testing and feedback. All work is done by me using web resources, with a focus on building a portfolio-worthy full-stack application.
 
