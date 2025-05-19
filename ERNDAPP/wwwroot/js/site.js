@@ -25,13 +25,18 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('#exerciseList input[type="checkbox"]:checked')
             ).map(checkbox => checkbox.value);
 
+            // Save Chosen Exercises to localStorage
+            localStorage.setItem('selectedExercises', JSON.stringify(selectedExercises));
+
+            // Close M9odal
+            closeExerciseModal();
+
             // Log it, for now
             console.log("Selected exercises:", selectedExercises);
 
             // Could store them in memory, localStorage, or send to backend
             // Ex: localStorage.setItem('currentWorkout', JSON.stringify(selectedExercises));
 
-            // Close Modal Option
-            closeExerciseModal();
+            // TODO: Trigger next step (open second modal or navigate)
     });
 });

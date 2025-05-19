@@ -1,0 +1,28 @@
+# Ignore build outputs
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+
+# Visual Studio files
+.vs/
+
+# Rider files (Not necessary I don't think,, but adding anyways)
+.idea/
+
+# Logs
+*.log
+
+# Others
+*.pdb
+*.exe
+*.dll
+*.cache
+*.vspscc
+*.vssscc
+
+# NuGet Packages
+*.nupkg
+packages/
