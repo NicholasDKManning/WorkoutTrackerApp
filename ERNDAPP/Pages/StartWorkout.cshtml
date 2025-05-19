@@ -1,0 +1,17 @@
+@page
+@model StartWorkoutModel
+@{
+    ViewData["Title"] = "StartWorkout";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Start Workout</h1>
+</div>
+
+@* Quick Start Workout Button Button *@
+<button class="btn btn-light w-100 text-start border rounded p-3 mb-2" id="openExerciseList">
+    Choose Exercises For Your Workout
+</button>
+
+@* Exercise Selection List *@
+@await Html.PartialAsync("_ExerciseModal")

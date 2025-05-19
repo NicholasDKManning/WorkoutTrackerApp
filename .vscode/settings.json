@@ -1,0 +1,6 @@
+{
+    "javascript.suggest.enabled": false,
+    "javascript.suggest.completeJSDocs": false,
+    "typescript.suggest.completeJSDocs": false,
+    "typescript.suggest.enabled": false
+}

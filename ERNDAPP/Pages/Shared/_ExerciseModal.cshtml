@@ -1,0 +1,36 @@
+@* Partial View for Start Workout Out Page --> Used so I'm not repeating the code in the html*@
+
+@* For Later --> Save exercises to memory, send to backend, and display confirmation *@
+
+@* Exercise Selection List *@
+<div id="exerciseModal" class="exercise-modal-container">
+    <div class="exercise-modal-header">
+        <h4>Select Each Exercise For Your Workout</h4> 
+    </div>
+
+    <div id="exerciseList" class="exercise-list">
+        <label class="exercise-list-item">
+            <input type="checkbox" value="Pushups" />
+            <span>Pushups</span>
+        </label>
+        <label class="exercise-list-item">
+            <input type="checkbox" value="BarbellBenchPress" />
+            <span>Barbell Bench Press</span>
+        </label>
+        <label class="exercise-list-item">
+            <input type="checkbox" value="BarbellBackSquat" />
+            <span>Barbell Back Squat</span>
+        </label>
+        <label class="exercise-list-item">
+            <input type="checkbox" value="BarbellDeadlift" />
+            <span>Barbell Deadlift</span>
+        </label>
+
+    @* Add More Lifts Later HERE!!!*@
+    
+    </div>
+    <div class="exercise-modal-footer">
+        <button id="startWorkoutBtn" class="btn-primary">Start Workout</button>
+        <button id="cancelWorkoutBtn" class="btn-secondary" onclick="closeExerciseModal()">Cancel</button>
+    </div>
+</div>

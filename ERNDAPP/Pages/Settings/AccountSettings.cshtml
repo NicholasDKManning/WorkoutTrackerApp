@@ -1,0 +1,39 @@
+@page
+@model ERNDAPP.Pages.Settings.AccountSettingsModel
+@using ERNDAPP.Areas.Identity.Data;
+
+
+@{
+    ViewData["Title"] = "Account Settings";
+}
+
+<h2>Account Settings</h2>
+
+<div class="list-group">
+
+    @if (User?.Identity != null && User.Identity.IsAuthenticated)
+    {
+        <form method="post" asp-page-handler="Logout">
+            <button type="submit" class="list-group-item list-group-item-action text-start">
+                Sign Out
+            </button>
+        </form>
+
+        <form method="post" asp-page-handler="Delete" onsubmit="return confirm('Are you absolutely sure DELETING your aaccount is what you WANT to do???');">
+            <button type="submit" class="list-group-item list-group-item-action text-start text-danger">
+                Delete Account
+            </button>
+        </form>        
+
+    }
+    else
+    {
+        <a asp-area="Identity" asp-page="/Account/Register" class="list-group-item list-group-item-action">
+            Register
+        </a>        
+        <a asp-area="Identity" asp-page="/Account/Login" class="list-group-item list-group-item-action">
+            Sign In
+        </a>
+    }
+
+</div>
