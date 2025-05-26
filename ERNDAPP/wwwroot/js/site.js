@@ -3,40 +3,92 @@
 
 // Write your JavaScript code.
 document.addEventListener('DOMContentLoaded', function() {
-    const exerciseModal = document.getElementById('exerciseModal');
+
     const openButton = document.getElementById('openExerciseList');
+    if (!openButton) 
+        return; // Will exit early when not on the StartWorkout page
+
+    const exerciseModal = document.getElementById('exerciseModal');
     const cancelButton = document.getElementById('cancelWorkoutBtn');
-
-    openButton.addEventListener('click', () => {
-        exerciseModal.classList.add('show');
-    });
-
-    function closeExerciseModal() {
-        exerciseModal.classList.remove('show');
-    }
-
-    cancelButton.addEventListener('click', closeExerciseModal);
-
+    const currentWorkoutModal = document.getElementById('currentWorkoutModal');
+    const exerciseWorkoutList = document.getElementById('exerciseWorkoutList');
+    const closeBtn = document.getElementById('closeCurrentWorkoutBtn');
+    const addExerciseBtn = document.getElementById('addMoreExercisesBtn');
+    const finishWorkoutBtn = document.getElementById('finishWorkoutBtn');
     const startWorkoutBtn = document.getElementById('startWorkoutBtn');
 
-    startWorkoutBtn.addEventListener('click', () => {
-        // Get all boxes that are checked inside the modal exercise list
-        const selectedExercises = Array.from(
-            document.querySelectorAll('#exerciseList input[type="checkbox"]:checked')
-            ).map(checkbox => checkbox.value);
+    // Hide the Modal
+    function closeExerciseModal() {
+        exerciseModal.classList.remove('show');
+        exerciseModal.classList.add('hidden');
+    }
 
-            // Save Chosen Exercises to localStorage
+    // Show the Modal
+    function showExerciseModal() {
+        exerciseModal.classList.add('show');
+        exerciseModal.classList.remove('hidden');
+    }
+
+    function openCurrentWorkoutModal() {
+            const selectedExercises = JSON.parse(localStorage.getItem('selectedExercises')) || [];
+            
+            // Clear previous content
+            exerciseWorkoutList.innerHTML = '';
+
+            selectedExercises.forEach((exercise) => {
+                const exerciseDiv = document.createElement('div');
+                exerciseDiv.className = 'exercise-block';
+
+                const title = document.createElement('h3');
+                title.textContent = exercise;
+                exerciseDiv.appendChild(title);
+
+                // Container for sets
+                const setsContainer = document.createElement('div');
+                setsContainer.className = 'sets-container';
+
+                // Button to add sets
+                const addSetBtn = document.createElement('button');
+                addSetBtn.textContent = '+ Add Set';
+                addSetBtn.addEventListener('click', () => {
+                    const setInput = document.createElement('input');
+                    setInput.type = 'number';
+                    setInput.placeholder = 'Reps';
+                    setsContainer.appendChild(setInput);
+                });
+
+                exerciseDiv.appendChild(setsContainer);
+                exerciseDiv.appendChild(addSetBtn);
+                exerciseWorkoutList.appendChild(exerciseDiv);
+            });
+
+            currentWorkoutModal.classList.add('show');
+
+        }
+
+        openButton?.addEventListener('click', () => {
+            exerciseModal.classList.add('show');
+        });
+
+        cancelButton?.addEventListener('click', closeExerciseModal);
+
+        startWorkoutBtn?.addEventListener('click', () => {
+            const selectedExercises = Array.from(
+                document.querySelectorAll('#exerciseList input[type="checkbox"]:checked')
+            ).map(cb => cb.value);
+
             localStorage.setItem('selectedExercises', JSON.stringify(selectedExercises));
-
-            // Close M9odal
             closeExerciseModal();
-
-            // Log it, for now
             console.log("Selected exercises:", selectedExercises);
+            openCurrentWorkoutModal();
+        });
 
-            // Could store them in memory, localStorage, or send to backend
-            // Ex: localStorage.setItem('currentWorkout', JSON.stringify(selectedExercises));
+        closeBtn?.addEventListener('click', () => {
+            currentWorkoutModal.classList.remove('show');
+        });
 
-            // TODO: Trigger next step (open second modal or navigate)
-    });
+        addExerciseBtn?.addEventListener('click', () => {
+            // Show the exercise modal again when add more exercises is clicked
+            showExerciseModal();
+        });
 });

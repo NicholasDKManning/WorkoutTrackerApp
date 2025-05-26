@@ -161,3 +161,22 @@ body {
 .btn-secondary:hover {
   background-color: #d6d6db;
 }
+
+/* IOS Style Modal For When There's An Active Workout In Progress */
+.modal.hidden {
+  display: none;
+}
+
+.modal.show {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* For a Dark Overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
