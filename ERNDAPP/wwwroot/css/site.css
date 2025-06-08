@@ -180,3 +180,12 @@ body {
   z-index: 1000;
 }
 
+/* Workout History Styling --> White Cards with a shadow for workout entries */
+.workout-card {
+  background-color: #ffffff;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  text-align: left;
+}

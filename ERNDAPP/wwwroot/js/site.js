@@ -1,6 +1,62 @@
 ﻿// Wait until the DOM fully loads before javascript code gets ran
+// Workouts History Container Code
 document.addEventListener('DOMContentLoaded', function() {
 
+    // Get the workout history container if on the workout history page
+    const historyContainer = document.getElementById('workoutHistoryContainer');
+    if (!historyContainer) return;  // Exits if not on the workout history page
+
+    // Gets the saved workout history from the local storage
+    const workouts = JSON.parse(localStorage.getItem('workoutHistory')) || [];
+    console.log("Workouts loaded from localStorage:", workouts);
+
+    // If there are no workouts that have been saved, show this message:
+    if (workouts.length === 0) {
+        historyContainer.innerHTML = '<p>No Completed Workouts Have Been Logged Yet.</p>';
+        return;
+    }
+
+    // Loop through each saved workout and show it
+    workouts.forEach((workout, index) => {
+        console.log("Workouts loaded from localStorage:", workouts);
+        const card = document.createElement('div'); // Create a workout card container
+        card.className = 'workout-card';            // Apply styling class 
+
+        // Checks for valid start time and end time
+        const startTimeText = workout.startTime
+            ? new Date(workout.startTime).toLocaleString()
+            : "No Start Time";
+        const endTimeText = workout.endTime
+            ? new Date(workout.endTime).toLocaleString()
+            : "No End Time";
+
+        // Format and insert the workout details
+        const title = `<h3>Workout #${index + 1}</h3>`;
+        const date = `<p><strong>Date:</strong> ${new Date(workout.startTime).toLocaleDateString()}</p>`;
+        const start = `<p><strong>Start:</strong> ${new Date(workout.startTime).toLocaleTimeString()}</p>`;
+        const end = `<p><strong>End:</strong> ${new Date(workout.endTime).toLocaleTimeString()}</p>`;
+
+        // Exercise counter
+        const exercisesCount = workout.exercises ? workout.exercises.length : 0;
+        const exercises = `<p><strong>Exercises:</strong> ${exercisesCount}</p>`;
+
+        // List the exercises and their sets
+        let exerciseHTML = '<ul>';
+        workout.exercises.forEach(ex => {
+            exerciseHTML += `<li><strong>${ex.name}:</strong> ${ex.sets.join(', ')}</li>`;
+        });
+        exerciseHTML += `</ul>`;
+
+        // Combine everything into the card
+        card.innerHTML = title + date + start + end + exerciseHTML;
+
+        // Add the card to the page
+        historyContainer.appendChild(card);
+    });
+});
+
+// Start Workout, Finish Workout handler code
+document.addEventListener('DOMContentLoaded', function () {
     let repData = JSON.parse(localStorage.getItem('repData')) || {};
     let setData = {};
     let timedExerciseData = {};
@@ -60,6 +116,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 const setsContainer = document.createElement('div');
                 setsContainer.className = 'sets-container';
 
+                // Automatically create inputs for each saved set
+                const savedReps = repData[exercise] || [];
+                savedReps.forEach((rep, index) => {
+                    const setInput = document.createElement('input');
+                    setInput.type = 'number';
+                    setInput.placeholder = 'Reps';
+                    setInput.value = rep || 0;  // Defaults the input value of reps to 0 if left empty
+
+                    // Save on input
+                    setInput.addEventListener('input', () => {
+                        const val = setInput.value || "0";
+                        repData[exercise][index] = val;
+                        localStorage.setItem('repData', JSON.stringify(repData));
+                    });
+
+                    setsContainer.appendChild(setInput);
+
+                });
+
                 // Button to add more sets
                 const addSetBtn = document.createElement('button');
 
@@ -69,6 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const setInput = document.createElement('input');
                     setInput.type = 'number';
                     setInput.placeholder = 'Reps';
+                    setInput.value = '0';   // Default amount
                     setsContainer.appendChild(setInput);
 
                     // If data was already inputted, restore it
@@ -81,11 +157,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Save updated rep value on input
                     setInput.addEventListener('input', () => {
-                        const value = setInput.value;
+                        const value = setInput.value || "0";
                         const index = Array.from(setsContainer.querySelectorAll('input')).indexOf(setInput);
-                        if (!repData[exercise]) {
-                            repData[exercise] = [];
-                        }
+                        if (!repData[exercise]) repData[exercise] = [];
                         repData[exercise][index] = value;
                         localStorage.setItem('repData', JSON.stringify(repData));
                     });
@@ -115,6 +189,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // When someone starts their workout, save the selected exercises and open the current workout modal
         startWorkoutBtn?.addEventListener('click', () => {
 
+            // Capture the start time of the workout after hitting start workout
+            const startTime = new Date().toISOString();
+            localStorage.setItem('workoutStartTime', startTime);
+
             // Gets all the checked exercise from the exercise selection modal
             const selectedExercises = Array.from(
                 document.querySelectorAll('#exerciseList input[type="checkbox"]:checked')
@@ -134,6 +212,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // When someone hits the x on the current workout modal, close the current workout modal
         closeBtn?.addEventListener('click', () => {
+            currentWorkoutModal.classList.remove('show');
+        });
+
+        // When someone hits finish workout, save all data relevant to their current workout
+        finishWorkoutBtn?.addEventListener('click', () => {
+            console.log("Finish Workout Button clicked");
+            const endTime = new Date().toISOString();
+            const startTime = localStorage.getItem('workoutStartTime');
+            const selectedExercises = JSON.parse(localStorage.getItem('selectedExercises')) || [];
+            const repData = JSON.parse(localStorage.getItem('repData')) || {};
+            const finishedWorkout = {
+                startTime,
+                endTime,
+                exercises: selectedExercises.map(ex => ({
+                    name: ex,
+                    sets: repData[ex] || []
+                    
+                }))
+            };
+            const allWorkouts = JSON.parse(localStorage.getItem('workoutHistory')) || [];
+            allWorkouts.push(finishedWorkout);
+            localStorage.setItem('workoutHistory', JSON.stringify(allWorkouts));
+            console.log("Loaded workouts from localStorage:", allWorkouts);
+
+            // Resets local storage to get rid of previous workout stuff and goes back to defaults
+            localStorage.removeItem('repData');
+            localStorage.removeItem('selectedExercises');
+            localStorage.removeItem('workoutStartTime');
+            exerciseWorkoutList.innerHTML = '';
             currentWorkoutModal.classList.remove('show');
         });
 
