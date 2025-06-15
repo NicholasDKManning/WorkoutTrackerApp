@@ -66,6 +66,7 @@
                             </li>
                         }
                     </ul>
+                    <input type="hidden" id="isUserLoggedIn" value="@(SignInManager.IsSignedIn(User ?? new System.Security.Claims.ClaimsPrincipal()).ToString().ToLower())" />
                 </div>
             </div>
         </nav>

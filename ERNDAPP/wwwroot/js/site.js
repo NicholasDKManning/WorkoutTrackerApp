@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Get the workout history container if on the workout history page
     const historyContainer = document.getElementById('workoutHistoryContainer');
-    if (!historyContainer) {
+    if (historyContainer) {
         // Workout History Page logic
         const workouts = loadJSON('workoutHistory');
         console.log("Workouts loaded from localStorage:", workouts);
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Format and insert the workout details
             const title = `<h3>Workout #${index + 1}</h3>`;
             const startDate = `<p><strong>Date:</strong> ${new Date(workout.startTime).toLocaleDateString()}</p>`;
-            const endDate = `<p><strong>Date:</strong> ${new Date(workout.startTime).toLocaleDateString()}</p>`;
+            const endDate = `<p><strong>Date:</strong> ${new Date(workout.endTime).toLocaleDateString()}</p>`;
             const start = `<p><strong>Start:</strong> ${new Date(workout.startTime).toLocaleTimeString()}</p>`;
             const end = `<p><strong>End:</strong> ${new Date(workout.endTime).toLocaleTimeString()}</p>`;
 
@@ -222,6 +222,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (workoutFinished) return;
         workoutFinished = true;
 
+        // Read whether the user is signed in
+        const isLoggedIn = document.getElementById("isUserLoggedIn")?.value === "true";
+
         const endTime = new Date().toISOString();
         const startTime = localStorage.getItem('workoutStartTime');
         
@@ -247,9 +250,17 @@ document.addEventListener('DOMContentLoaded', function () {
             }))
         };
         
-        const allWorkouts = loadJSON('workoutHistory');
-        allWorkouts.push(finishedWorkout);
-        localStorage.setItem('workoutHistory', JSON.stringify(allWorkouts));
+        if (isLoggedIn) {
+            // SEND TO BACKEND CONTROLLER 
+            console.log("User is logged in - send to backend API.");
+            // TODO: ADD THE API CALL IN THE NEXT STEP HERE
+        } else {
+            // Save to localStorage
+            const allWorkouts = loadJSON('workoutHistory');
+            allWorkouts.push(finishedWorkout);
+            localStorage.setItem('workoutHistory', JSON.stringify(allWorkouts));
+        }
+
 
         // Cleanup
         localStorage.removeItem('repData');

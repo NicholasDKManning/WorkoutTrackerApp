@@ -8,22 +8,28 @@ var connectionString = builder.Configuration.GetConnectionString("ERNDAPPIdentit
 
 builder.Services.AddDbContext<ERNDDbContext>(options => options.UseSqlServer(connectionString));
 
-builder.Services.AddDefaultIdentity<ERNDUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ERNDDbContext>().AddDefaultUI();
+builder.Services.AddDefaultIdentity<ERNDUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddEntityFrameworkStores<ERNDDbContext>()
+    .AddDefaultUI();
 
 // Add services to the container.
 builder.Services.AddRazorPages(options => options.Conventions.AuthorizePage("/Privacy"));
+builder.Services.AddControllers();  // Needed for API support
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();    // Shows detailed error messages in dev
+}
+else
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+    app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -32,5 +38,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+app.MapControllers();   // Enables routing to WorkoutApiController
 
 app.Run();
