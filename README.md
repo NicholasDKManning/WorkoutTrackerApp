@@ -1,119 +1,95 @@
-🏋️ Web-Based Workout Tracker (MVP)
-This is a full-stack web application I’m building to grow as an application developer. The goal is to create a mobile-style fitness app where users can log in, track workouts in detail, and view their workout history — all through a clean, responsive web interface.
-
-This is a long-term learning project, but the Minimum Viable Product (MVP) is being built in HOPEFULLY two weeks to allow for user testing and feedback. All work is done by me using web resources, with a focus on building a portfolio-worthy full-stack application.
+🏋️ ERND - Progressive Workout Tracker (MVP)
+ERND is my first full-stack mobile-style fitness web app designed to help users track and log their workouts in detail. It includes features like user authentication, wokrout logging, history tracking, and more. This app provides an intuitive, clean, and responsive interface for fitness enthusiasts looking for a simple way to track their workouts.
 
 🛠️ Tech Stack
-Frontend: HTML, CSS, JavaScript
+Frontend: 
+  HTML, CSS, JavaScript
+  Responsive design for mobile-first experience
 
-Backend: C# with ASP.NET Core (Razor Pages)
+Backend: 
+  C# with ASP.NET Core (Razor Pages)
+  Authentication using ASP.NET Core Identity
 
-Database: SQLite + Entity Framework Core
+Database: 
+  SQLite for persistent data storage
+  Entity Framework Core for Object-Relational Mapping
 
-Authentication: ASP.NET Identity
+Authentication: 
+  ASP.NET Identity for secure user registration, login, and session management
 
-Deployment: Planned (Azure, Render, or Vercel + API backend)
+Deployment: 
+  Render for hosting the app and API
 
 ✅ Core Features
-User Authentication – Register/Login with secure sessions
+User Authentication: Secure user registration, login, and session management with ASP.NET Core Identity
 
-User Dashboard – View welcome message and workout history
+User Dashboard (Future): Personalized dashboard with a welcome message and access to workout history
 
-Start New Workout – Choose from a list of predefined exercises
+Start New Workout: Select from predefined exercises to begin a workout session
 
-Workout Logging –
+Workout Logging:
+  Log sets, reps, and weights
+  Track time duration for each workout
+  Option to Add notes for each workout session (Future)
 
-Log sets, reps, weights, personal records
-
-Track time durations
-
-Add notes for each workout session
-
-Workout History – View previously logged workouts with details
+Workout History: View previously logged workouts with details such as sets, reps, weights, and notes
 
 📈 Development Timeline (Step-by-Step)
 
 ✅ Phase 1: Project Setup + User Authentication
-Set up ASP.NET Razor Pages project in Visual Studio
+Set up ASP.NET Razor Pages project in Visual Studio Code
 
-Integrate ASP.NET Identity for secure user registration and login
+Integrated ASP.NET Identity for user registration, login, and secure sesssion management
 
-Scaffold auth pages and test login/logout flow
-
-📺 Video:
-ASP.NET Identity Basics – IAmTimCorey
+Scaffolded authenticated pages and tested login/logout flow
 
 ✅ Phase 2: User Dashboard & Routing
-Redirect logged-in users to a /Dashboard page
+Redirect logged-in users to the Home page after login
 
-Show a welcome message using User.Identity.Name
+Show a welcome message using User.Identity.Name (greeting the user by their account name)
 
-Create buttons: Start Workout, View History
-
-📺 Video:
-Razor Pages Routing – Kudvenkat
+Provide links or buttons to navigate to key pages: Start Workout, Workout History, and Settings
 
 ✅ Phase 3: Start New Workout UI
-Display a modal/popup with a scrollable list of exercises
+Designed a scrollable modal with predefined exercises for users to select from
 
-Allow user to select multiple exercises to start a session
+Enabled users to choose multiple exercises for their workout session
 
-Prepare a new workout session and redirect to logging page
-
-📺 Video:
-Razor Pages Forms – Raw Coding
+Prepared workout session data and redirected users to the workout session modal
 
 ✅ Phase 4: Exercise Logging Page
-Dynamically generate input fields for:
+Dynamically generate input fields for logging sets, reps, and weights
 
-Sets, reps, weights
-
-Time durations (e.g. timed exercises or rest)
-
-PR checkboxes or flags
-
-Notes field for overall workout
-
-Allow editing and removing of exercises before submitting
-
-📺 Video:
-EF Core Forms and Nested Models – IAmTimCorey
+Allowed users to edit, add, and remove exercises before final submission
 
 ✅ Phase 5: Saving and Viewing Workout History
-Use EF Core to persist:
+Use EF Core to persist workout sessions and exercises
 
-Workout sessions
-
-Associated exercises and logs
-
-Notes and metrics
-
-Display all previous workouts for the logged-in user
-
-Allow users to click into each workout to view detailed logs
-
-📺 Video:
-EF Core with Relationships – Tim Corey
+Displayed previous workouts with detailed logs and metrics
 
 🧠 Project Goals
-Show full-stack capability using a modern C# + Razor stack
+Demonstrate full-stack development using modern C# and Razor Pages technologies
 
-Learn form handling, state management, and data relationships
-
-Gain real-world experience with user authentication and data persistence
-
-Produce a real, working app that users (including recruiters/interviewers) can interact with
+Professional Growth & Learning:
+  Technical:
+    Developed full-stack web application skills with front-end and back-end development with JavaScript, C#, ASP.NET Core, and SQLite
+    Gained hands-on exerience implementing user authentication and session management with ASP.NET Identity
+    Integrated client-side logic with RESTful API calls to sync workout data between local storage and the server
+    Gained skills in Cross-platform UI design
+    Designed and managed database models with Entity Framework Core for storing wokrout data and user sessions
+    Strengthened version control skills using Git and GitHub for managing project code
+  Non-Technical:
+    Project Management skills by planning, structuring, and executing an MVP
+    Problem-solving 
+    Clear Communication and Documentation skills through clear project descriptions and code comments
+  
 
 🔜 Post-MVP / Future Enhancements
-Build a custom workout plan feature
+Custom Workout Plans: Allow users to create their own exercises and personalized workout plans
 
-Add progress tracking dashboards or visual graphs
+TRAINER & TRAINEE: Create a system for coaches/trainers to build full workout plans where trainees can sign up and keep up with their coach's plan
 
-Add timer + stopwatch functionality
-
-Convert into a PWA (progressive web app)
-
-Build an API backend for native mobile apps
+PWA (Progressive Web App): Convert the app into a fully functional Progressive Web App for offline usage
 
 💬 Feedback & Goals
 
