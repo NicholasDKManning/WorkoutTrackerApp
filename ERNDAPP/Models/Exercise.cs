@@ -13,6 +13,6 @@ namespace ERNDAPP.Models
         public string Name { get; set; } = string.Empty;
 
         // Store reps per set as acomma-separated string --> 10,8,6
-        public string Sets { get; set; } = string.Empty;
+        public List<Set> Sets { get; set; } = new List<Set>();
     }
 }

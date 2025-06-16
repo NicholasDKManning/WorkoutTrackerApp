@@ -1,8 +1,23 @@
-﻿// Wait until the DOM fully loads before javascript code gets ran
-// Workouts History Container Code
+﻿console.log("Site.JS is running!");
+
+function showToast(message, duration = 3000) {
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.classList.add('toast');
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('hide');
+        setTimeout(() => document.body.removeChild(toast), 500);
+    }, duration);
+}
+
+if (typeof window.workoutListenerAttached === 'undefined') {
+    window.workoutListenerAttached = false;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
 
-    // Workout finished flag will be set to false
     let workoutFinished = false;
 
     function loadJSON(key, fallback = []) {
@@ -23,47 +38,69 @@ document.addEventListener('DOMContentLoaded', function () {
     const historyContainer = document.getElementById('workoutHistoryContainer');
     if (historyContainer) {
         // Workout History Page logic
-        const workouts = loadJSON('workoutHistory');
-        console.log("Workouts loaded from localStorage:", workouts);
+        const isLoggedIn = document.getElementById("isUserLoggedIn")?.value === "true";
+        console.log("User is logged in:", isLoggedIn);
 
-        // If there are no workouts that have been saved, show this message:
-        if (workouts.length === 0) {
-            historyContainer.innerHTML = '<p>No Completed Workouts Have Been Logged Yet.</p>';
+        // Logd from server or localStorage based on login
+        if (isLoggedIn) {
+            fetch('/api/workoutapi/userworkouts')
+                .then(res => {
+                    if (!res.ok) throw new Error("Failed to fetch workouts from server.");
+                    return res.json();
+                })
+                .then(data => {
+                    console.log("Workouts loaded from server:", data);
+                    displayWorkoutHistory(data, historyContainer);
+                })
+                .catch(error => {
+                    console.error("Error loading workouts from server:", error);
+                    historyContainer.innerHTML = '<p>Could not load your workouts. Try again later.</p>';
+                });
+        } else {
+            const localWorkouts = loadJSON('workoutHistory');
+            console.log("Workouts loaded from localStorage:", localWorkouts);
+            displayWorkoutHistory(localWorkouts, historyContainer);
+        }
+
+        return; // Don't run StartWorkout logic on workout history page
+    }
+
+    const onStartWorkoutPage = !!document.getElementById('openExerciseList');
+    if (!onStartWorkoutPage) return;
+
+    function displayWorkoutHistory(workouts, container) {
+        if (!workouts || workouts.length === 0) {
+            container.innerHTML = '<p>No Completed Workouts Have Been Logged Yet.</p>';
             return;
         }
 
-        // Loop through each saved workout and show it
-        console.log("Loading workouts...")
         workouts.forEach((workout, index) => {
-            const card = document.createElement('div'); // Create a workout card container
-            card.className = 'workout-card';            // Apply styling class 
+            const card = document.createElement('div');
+            card.className = 'workout-card';
 
-            // Checks for valid start time and end time
+            const title = `<h3>Workout #${index + 1}</h3>`;
             const startTimeText = workout.startTime ? new Date(workout.startTime).toLocaleString() : "No Start Time";
             const endTimeText = workout.endTime ? new Date(workout.endTime).toLocaleString() : "No End Time";
+            const start = `<p><strong>Start:</strong> ${startTimeText}</p>`;
+            const end = `<p><strong>End:</strong> ${endTimeText}</p>`;
 
-            // Format and insert the workout details
-            const title = `<h3>Workout #${index + 1}</h3>`;
-            const startDate = `<p><strong>Date:</strong> ${new Date(workout.startTime).toLocaleDateString()}</p>`;
-            const endDate = `<p><strong>Date:</strong> ${new Date(workout.endTime).toLocaleDateString()}</p>`;
-            const start = `<p><strong>Start:</strong> ${new Date(workout.startTime).toLocaleTimeString()}</p>`;
-            const end = `<p><strong>End:</strong> ${new Date(workout.endTime).toLocaleTimeString()}</p>`;
-
-            // List the exercises and their sets
             let exerciseHTML = '<ul>';
             workout.exercises.forEach(ex => {
-                exerciseHTML += `<li><strong>${ex.name}:</strong> ${ex.sets.join(', ')}</li>`;
+                if (Array.isArray(ex.sets)) {
+                    exerciseHTML += `<li><strong>${ex.name}</strong><ul>`;
+                    ex.sets.forEach((set, i) => {
+                        exerciseHTML += `<li>Set ${i + 1}: ${set.reps} reps</li>`;
+                    });
+                    exerciseHTML += `</ul></li>`;
+                } else {
+                    exerciseHTML += `<li><strong>${ex.name}:</strong> No sets recorded</li>`;
+                }
             });
             exerciseHTML += `</ul>`;
 
-            // Combine everything into the card
-            card.innerHTML = title + startDate + start + end + exerciseHTML;
-
-            // Add the card to the page
-            historyContainer.appendChild(card);
+            card.innerHTML = title + start + end + exerciseHTML;
+            container.appendChild(card);
         });
-
-        return; // Don't run StartWorkout logic on workout history page
     }
 
     // If not on the workout history page
@@ -164,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 setInput.addEventListener('input', () => {
                     const value = setInput.value || "0";
                     const index = Array.from(setsContainer.querySelectorAll('input')).indexOf(setInput);
-                    repData[exercise].push(value);
+                    repData[exercise][index] = value;
                     saveJSON('repData', repData);
                 });
             });
@@ -217,20 +254,19 @@ document.addEventListener('DOMContentLoaded', function () {
         currentWorkoutModal.classList.remove('show');
     });
 
-    finishWorkoutBtn?.addEventListener('click', () => {
+    let workoutHandlerTriggerCount = 0;
+
+    const finishWorkoutHandler = async (event) => {
+        event?.preventDefault();    // Stop form submission fi button is inside a form
+        
+        // workoutHandlerTriggerCount++;
+        // console.log(`Finish workout handler called ${workoutHandlerTriggerCount} times`);
 
         if (workoutFinished) return;
         workoutFinished = true;
 
-        // Read whether the user is signed in
-        const isLoggedIn = document.getElementById("isUserLoggedIn")?.value === "true";
-
         const endTime = new Date().toISOString();
-        const startTime = localStorage.getItem('workoutStartTime');
-        
-        // Finish button clicked and retrieve the workout start time checker
-        console.log("Finish button clicked. Retrieved startTime:", startTime);
-
+        const startTime = localStorage.getItem('workoutStartTime');        
         // Prevent invalid date workout from being logged
         if (!startTime) {
             alert("No start time found. You must start a workout first");
@@ -240,27 +276,80 @@ document.addEventListener('DOMContentLoaded', function () {
         const selectedExercises = loadJSON('selectedExercises');
         const repData = loadJSON('repData');
 
+        // Update repData from the DOM before saving
+        document.querySelectorAll('.exercise-block').forEach(block => {
+        const exerciseName = block.querySelector('h3').textContent;
+        const repsAndWeight = Array.from(block.querySelectorAll('input')).map(input => input.value || "0");
+        repData[exerciseName] = repsAndWeight;
+        });
+        saveJSON('repData', repData);
+
+        console.log("Selected exercises:", selectedExercises);
+        console.log("repData at save time:", repData);
+
         const finishedWorkout = {
             startTime,
             endTime,
-            exercises: selectedExercises.map(ex => ({
-                name: ex,
-                sets: repData[ex] || []
-                
-            }))
+            exercises: selectedExercises
+                .map(exerciseName => {
+                    const sets = (repData[exerciseName] || [])
+                        .filter(s => s && s.trim() !== '')  // remove empty strings
+                        .map(s => {
+                            const [repsString, weightString] = s.split('@').map(x => x?.trim());    // split the string --> 10 reps @ 135 lbs
+                            const reps = parseInt(repsString, 10) || 0; // Convert reps to an integert, defaults to 0 if invalid
+                            const weight = weightString ? parseFloat(weightString) : 0; // Convert weight to float, default to 0
+                            return { reps, weight };
+                        });
+
+                    return { name: exerciseName, sets };
+                })                    
+                .filter(exercise => exercise.sets.length > 0)
         };
-        
+
+        // Read whether the user is signed in
+        const isLoggedIn = document.getElementById("isUserLoggedIn")?.value === "true";
+
         if (isLoggedIn) {
-            // SEND TO BACKEND CONTROLLER 
+            // SEND TO BACKEND CONTROLLER
             console.log("User is logged in - send to backend API.");
-            // TODO: ADD THE API CALL IN THE NEXT STEP HERE
+            
+            try {
+                console.log("Sending workout pkayload:", JSON.stringify(finishedWorkout, null, 2));
+                const response = await fetch('/api/workoutapi/save', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(finishedWorkout)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(data.message || "Workout saved successfully!");
+                } else {
+                    const errorData = await response.json();
+                    alert(`Failed to save workout: ${errorData.message || response.statusText}`);
+                    console.error('Error data from backend:', errorData);
+
+                    // Fallback to saving to localStorage
+                    const allWorkouts = loadJSON('workoutHistory');
+                    allWorkouts.push(finishedWorkout);
+                    localStorage.setItem('workoutHistory', JSON.stringify(allWorkouts));
+                }
+            } catch (error) {
+                alert(`Error saving workout: ${error.message}`);
+
+                // Fall back to saving to localStorage
+                const allWorkouts = loadJSON('workoutHistory');
+                allWorkouts.push(finishedWorkout);
+                localStorage.setItem('workoutHistory', JSON.stringify(allWorkouts));
+            }
         } else {
-            // Save to localStorage
+            // Save to localStorage if user not logged in
             const allWorkouts = loadJSON('workoutHistory');
             allWorkouts.push(finishedWorkout);
             localStorage.setItem('workoutHistory', JSON.stringify(allWorkouts));
         }
-
 
         // Cleanup
         localStorage.removeItem('repData');
@@ -271,8 +360,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Workout finished flag reset
         setTimeout(() => workoutFinished = false, 2000);
-    });
+    };
 
+    if (finishWorkoutBtn && !window.workoutListenerAttached) {
+        finishWorkoutBtn.addEventListener('click', finishWorkoutHandler);
+        window.workoutListenerAttached = true;
+    }
+    
     // When someone clicks the button to add more exercises, show the exercise selection modal again.
     addExerciseBtn?.addEventListener('click', () => {
         showExerciseModal();

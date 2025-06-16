@@ -4,6 +4,7 @@ using ERNDAPP.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERNDAPP.Migrations
 {
     [DbContext(typeof(ERNDDbContext))]
-    partial class ERNDDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250615235224_AddSetTable")]
+    partial class AddSetTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -123,14 +126,14 @@ namespace ERNDAPP.Migrations
                     b.Property<int>("Reps")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Weight")
+                    b.Property<decimal>("weight")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ExerciseId");
 
-                    b.ToTable("Sets");
+                    b.ToTable("Set");
                 });
 
             modelBuilder.Entity("ERNDAPP.Models.WorkoutSession", b =>

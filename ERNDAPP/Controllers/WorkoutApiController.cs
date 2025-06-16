@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ERNDAPP.Models;
 using System.Threading.Tasks;
 using ERNDAPP.Data;
+using System.Security.Claims;
 
 namespace ERNDAPP.Controllers
 {
@@ -29,17 +30,55 @@ namespace ERNDAPP.Controllers
                 return BadRequest("Workout data is required.");
             }
 
-            // Validate user ID 
-            if (string.IsNullOrEmpty(workoutSession.UserId))
-            {
-                return BadRequest("User ID is required.");
-            }
+            // Validate user ID
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("User is not logged in");
+
+            // Assign the userId to the workoutSession
+            workoutSession.UserId = userId;
 
             // Save the workout sesssion and its exercises to the database
             _dbContext.WorkoutSessions.Add(workoutSession);
             await _dbContext.SaveChangesAsync();
 
             return Ok(new { message = "Workout saved successfully!" });
+        }
+
+        // GET: api/workoutapi/userworkouts
+        [HttpGet("userworkouts")]
+        public IActionResult GetUserWorkouts()
+        {
+            // Make sure the user is authenticated
+            if (User?.Identity == null || !User.Identity.IsAuthenticated)
+                return Unauthorized();
+
+            // Get the user's ID
+            var userId = User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier);
+
+            // Fetch workouts for this user with the exercises
+            var workouts = _dbContext.WorkoutSessions
+                .Where(ws => ws.UserId == userId)
+                .Select(ws => new
+                {
+                    ws.Id,
+                    ws.StartTime,
+                    ws.EndTime,
+                    ws.UserId,
+                    Exercises = ws.Exercises.Select(e => new
+                    {
+                        e.Name,
+                        Sets = e.Sets.Select(s => new
+                        {
+                            s.Reps,
+                            s.Weight
+                        }).ToList()
+                    }).ToList()
+                })
+                .OrderByDescending(ws => ws.StartTime)
+                .ToList();
+                
+            return Ok(workouts);
         }
     }
 }
