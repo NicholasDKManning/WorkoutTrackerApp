@@ -22,10 +22,10 @@ namespace ERNDAPP.Controllers
         // POST: api/workoutapi/save
         // This method accepts workout session data from the frontend and saves it in the database
         [HttpPost("save")]
-        public async Task<IActionResult> SaveWorkout([FromBody] WorkoutSession workoutSession)
+        public async Task<IActionResult> SaveWorkout([FromBody] List<WorkoutSession> workoutSessions)
         {
             // Validate input
-            if (workoutSession == null)
+            if (workoutSessions == null)
             {
                 return BadRequest("Workout data is required.");
             }
@@ -35,11 +35,12 @@ namespace ERNDAPP.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized("User is not logged in");
 
-            // Assign the userId to the workoutSession
-            workoutSession.UserId = userId;
+            foreach (var ws in workoutSessions)
+            {
+                ws.UserId = userId;
+                _dbContext.WorkoutSessions.Add(ws);
+            }
 
-            // Save the workout sesssion and its exercises to the database
-            _dbContext.WorkoutSessions.Add(workoutSession);
             await _dbContext.SaveChangesAsync();
 
             return Ok(new { message = "Workout saved successfully!" });

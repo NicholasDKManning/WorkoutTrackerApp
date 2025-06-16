@@ -34,15 +34,60 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem(key, JSON.stringify(value));
     }
 
+    // Function to save unsaved workouts to the server after login
+    async function saveLocalWorkoutsToServer(workouts) {
+        try {
+
+            const payload = workouts;
+
+            console.log("Payload being sent to server:", payload);
+
+            let res = await fetch('/api/workoutapi/save', {
+                method: 'POST',
+                headers: { 'Content-type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) throw new Error("Failed to save workouts to server.");
+            await res.json();
+
+            console.log("Unsaved workouts transferred to server.");
+            // Clear the workouts from localStorage after successful save
+            localStorage.removeItem('workoutHistory');
+            
+            // After a successful save, reload workouts from server and update UI
+            res = await fetch('/api/workoutapi/userworkouts')            
+            
+            if (!res.ok) throw new Error("Failed to fetch workouts from server.");
+            const data = await res.json();
+
+            const historyContainer = document.getElementById('workoutHistoryContainer');
+            if(historyContainer) {
+                historyContainer.innerHTML = '';    // clear old data
+                displayWorkoutHistory(data, historyContainer);
+            } 
+            
+        } catch (error) {
+                console.error("Error saving workouts to server:", error);        
+        }
+    }
+    
     // Get the workout history container if on the workout history page
     const historyContainer = document.getElementById('workoutHistoryContainer');
     if (historyContainer) {
         // Workout History Page logic
         const isLoggedIn = document.getElementById("isUserLoggedIn")?.value === "true";
-        console.log("User is logged in:", isLoggedIn);
 
         // Logd from server or localStorage based on login
         if (isLoggedIn) {
+            // Check if there are unsaved workouts in localStorage
+            const localWorkouts = loadJSON('workoutHistory');
+            if (localWorkouts && localWorkouts.length > 0) {
+                console.log("Sending payload to server:", JSON.stringify(localWorkouts.flat(), null, 2));
+                saveLocalWorkoutsToServer(localWorkouts.flat());
+            }
+
+            // Check if logged in
             fetch('/api/workoutapi/userworkouts')
                 .then(res => {
                     if (!res.ok) throw new Error("Failed to fetch workouts from server.");
@@ -57,9 +102,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     historyContainer.innerHTML = '<p>Could not load your workouts. Try again later.</p>';
                 });
         } else {
-            const localWorkouts = loadJSON('workoutHistory');
-            console.log("Workouts loaded from localStorage:", localWorkouts);
-            displayWorkoutHistory(localWorkouts, historyContainer);
+            const localWorkouts = loadJSON('workoutHistory') || [];
+            const flattenedWorkouts = localWorkouts.flat(); // flatten one level of nesting
+            console.log("Workouts loaded from localStorage (flattened):", flattenedWorkouts);
+            displayWorkoutHistory(flattenedWorkouts, historyContainer);
         }
 
         return; // Don't run StartWorkout logic on workout history page
@@ -89,7 +135,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (Array.isArray(ex.sets)) {
                     exerciseHTML += `<li><strong>${ex.name}</strong><ul>`;
                     ex.sets.forEach((set, i) => {
-                        exerciseHTML += `<li>Set ${i + 1}: ${set.reps} reps</li>`;
+                        const weightText = set.weight ? ` @ ${set.weight} lbs` : '';
+                        exerciseHTML += `<li>Set ${i + 1}: ${set.reps} reps${weightText}</li>`;
                     });
                     exerciseHTML += `</ul></li>`;
                 } else {
@@ -165,19 +212,28 @@ document.addEventListener('DOMContentLoaded', function () {
             // Automatically create inputs for each saved set
             const savedReps = repData[exercise] || [];
             savedReps.forEach((rep, index) => {
-                const setInput = document.createElement('input');
-                setInput.type = 'number';
-                setInput.placeholder = 'Reps';
-                setInput.value = rep || 0;  // Defaults the input value of reps to 0 if left empty
+                const repsInput = document.createElement('input');
+                repsInput.type = 'number';
+                repsInput.placeholder = 'Reps';
+                repsInput.value = rep?.reps || 0;
+                
+                const weightInput = document.createElement('input');
+                weightInput.type = 'number';
+                weightInput.placeholder = 'Weight (lbs)';
+                weightInput.value = rep?.weight || 0;
 
-                // Save on input
-                setInput.addEventListener('input', () => {
-                    const val = setInput.value || "0";
-                    repData[exercise][index] = val;
-                    localStorage.setItem('repData', JSON.stringify(repData));
+                repsInput.addEventListener('input', () => {
+                    repData[exercise][index].reps = parseInt(repsInput.value) || 0;
+                    saveJSON('repData', repData);
                 });
 
-                setsContainer.appendChild(setInput);
+                weightInput.addEventListener('input', () => {
+                    repData[exercise][index].weight = parseInt(weightInput.value) || 0;
+                    saveJSON('repData', repData);
+                });
+                
+                setsContainer.appendChild(repsInput)
+                setsContainer.appendChild(weightInput);
 
             });
 
@@ -187,21 +243,36 @@ document.addEventListener('DOMContentLoaded', function () {
             // If the button is clicked, an input for reps will appear
             addSetBtn.textContent = '+ Add Set';
             addSetBtn.addEventListener('click', () => {
-                const setInput = document.createElement('input');
-                setInput.type = 'number';
-                setInput.placeholder = 'Reps';
-                setInput.value = '0';   // Default amount
-                setsContainer.appendChild(setInput);
+                const repsInput = document.createElement('input');
+                repsInput.type = 'number';
+                repsInput.placeholder = 'Reps';
+                repsInput.value = '0';
 
-                // If data was already inputted, restore it
-                const index = setsContainer.querySelectorAll('input').length - 1;
+                const weightInput = document.createElement('input');
+                weightInput.type = 'number';
+                weightInput.placeholder = 'Weight (lbs)';
+                weightInput.value = '0';
+
+                setsContainer.appendChild(repsInput);
+                setsContainer.appendChild(weightInput);
+
+                // Makes sure repData[exercise] exists
                 if (!repData[exercise]) repData[exercise] = [];
 
-                // Save updated rep value on input
-                setInput.addEventListener('input', () => {
-                    const value = setInput.value || "0";
-                    const index = Array.from(setsContainer.querySelectorAll('input')).indexOf(setInput);
-                    repData[exercise][index] = value;
+                // Push initial set data
+                repData[exercise].push({ reps: 0, weight: 0});
+                saveJSON('repData', repData);
+
+                // If data was already inputted, restore it
+                const index = repData[exercise].length - 1;
+
+                repsInput.addEventListener('input', () => {
+                    repData[exercise][index].reps = parseInt(repsInput.value) || 0;
+                    saveJSON('repData', repData);
+                });
+
+                weightInput.addEventListener('input', () => {
+                    repData[exercise][index].weight = parseInt(weightInput.value) || 0;
                     saveJSON('repData', repData);
                 });
             });
@@ -279,32 +350,42 @@ document.addEventListener('DOMContentLoaded', function () {
         // Update repData from the DOM before saving
         document.querySelectorAll('.exercise-block').forEach(block => {
         const exerciseName = block.querySelector('h3').textContent;
-        const repsAndWeight = Array.from(block.querySelectorAll('input')).map(input => input.value || "0");
-        repData[exerciseName] = repsAndWeight;
+        const inputs = Array.from(block.querySelectorAll('input'));
+        const sets = [];
+
+        // Input arranged as pairs: reps input followed by weight input
+        for (let i = 0; i < inputs.length; i += 2) {
+            const repsValue = parseInt(inputs[i].value, 10) || 0;
+            const weightValue = parseFloat(inputs[i + 1]?.value) || 0;
+            sets.push({ reps: repsValue, weight: weightValue });
+        }
+
+        repData[exerciseName] = sets;
         });
-        saveJSON('repData', repData);
 
         console.log("Selected exercises:", selectedExercises);
         console.log("repData at save time:", repData);
 
-        const finishedWorkout = {
-            startTime,
-            endTime,
-            exercises: selectedExercises
-                .map(exerciseName => {
-                    const sets = (repData[exerciseName] || [])
-                        .filter(s => s && s.trim() !== '')  // remove empty strings
-                        .map(s => {
-                            const [repsString, weightString] = s.split('@').map(x => x?.trim());    // split the string --> 10 reps @ 135 lbs
-                            const reps = parseInt(repsString, 10) || 0; // Convert reps to an integert, defaults to 0 if invalid
-                            const weight = weightString ? parseFloat(weightString) : 0; // Convert weight to float, default to 0
-                            return { reps, weight };
-                        });
+        const finishedWorkout = [
+            {
+                startTime: startTime,
+                endTime: endTime,
+                exercises: selectedExercises
+                    .map(exerciseName => {
+                        const sets = (repData[exerciseName] || [])
+                            .map(set => ({
+                                reps: set.reps || 0,
+                                // If weight is missing or blank, default to 0
+                                weight: set.weight || 0
+                            }));
 
-                    return { name: exerciseName, sets };
-                })                    
-                .filter(exercise => exercise.sets.length > 0)
-        };
+                        if (sets.length === 0) return null;
+
+                        return { name: exerciseName, sets };
+                    })
+                    .filter(exercise => exercise.sets.length > 0)
+            }
+        ];
 
         // Read whether the user is signed in
         const isLoggedIn = document.getElementById("isUserLoggedIn")?.value === "true";
@@ -314,7 +395,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log("User is logged in - send to backend API.");
             
             try {
-                console.log("Sending workout pkayload:", JSON.stringify(finishedWorkout, null, 2));
+                console.log("Sending workout payload:", JSON.stringify(finishedWorkout, null, 2));
                 const response = await fetch('/api/workoutapi/save', {
                     method: 'POST',
                     headers: {
@@ -328,8 +409,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     alert(data.message || "Workout saved successfully!");
                 } else {
                     const errorData = await response.json();
-                    alert(`Failed to save workout: ${errorData.message || response.statusText}`);
-                    console.error('Error data from backend:', errorData);
+                    console.error('Validation errors:', errorData.errors);
+                    alert(`Failed to save workout: ${errorData.message || errorData.title}`);
+
 
                     // Fallback to saving to localStorage
                     const allWorkouts = loadJSON('workoutHistory');
@@ -337,6 +419,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     localStorage.setItem('workoutHistory', JSON.stringify(allWorkouts));
                 }
             } catch (error) {
+                console.error('Error:', error);
                 alert(`Error saving workout: ${error.message}`);
 
                 // Fall back to saving to localStorage
