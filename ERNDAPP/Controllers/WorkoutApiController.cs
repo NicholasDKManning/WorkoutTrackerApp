@@ -3,6 +3,7 @@ using ERNDAPP.Models;
 using System.Threading.Tasks;
 using ERNDAPP.Data;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace ERNDAPP.Controllers
 {
@@ -44,6 +45,33 @@ namespace ERNDAPP.Controllers
             await _dbContext.SaveChangesAsync();
 
             return Ok(new { message = "Workout saved successfully!" });
+        }
+
+        // DELETE: api/workoutapi/delete/{id}
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteWorkout(int id)
+        {
+            // Check user ID
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("User is not logged in");
+
+            // Find the saved workout session by id and user id
+            var workout = await _dbContext.WorkoutSessions
+                .Include(ws => ws.Exercises)
+                .ThenInclude(e => e.Sets)
+                .FirstOrDefaultAsync(ws => ws.Id == id && ws.UserId == userId);
+
+            if (workout == null)
+            {
+                return NotFound("Workout not found or you do not have permission to delete it.");
+            }
+
+            // Remove the workout
+            _dbContext.WorkoutSessions.Remove(workout);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Workout deleted successfully." });
         }
 
         // GET: api/workoutapi/userworkouts

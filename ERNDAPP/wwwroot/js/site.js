@@ -119,10 +119,15 @@ document.addEventListener('DOMContentLoaded', function () {
             container.innerHTML = '<p>No Completed Workouts Have Been Logged Yet.</p>';
             return;
         }
-
+        
         workouts.forEach((workout, index) => {
+            console.log("Rendering workout:", workout);
+            console.log("Workout ID:", workout.id);
             const card = document.createElement('div');
             card.className = 'workout-card';
+
+            const isLoggedIn = document.getElementById("isUserLoggedIn")?.value === "true";
+            console.log("Workout ID:", workout.id);            
 
             const title = `<h3>Workout #${index + 1}</h3>`;
             const startTimeText = workout.startTime ? new Date(workout.startTime).toLocaleString() : "No Start Time";
@@ -146,8 +151,65 @@ document.addEventListener('DOMContentLoaded', function () {
             exerciseHTML += `</ul>`;
 
             card.innerHTML = title + start + end + exerciseHTML;
+
+            const allowDelete = isLoggedIn || !workout.id;
+
+            if (allowDelete) {
+                // Workout Card Delete Button
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'X';
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.addEventListener('click', () => handleDeleteWorkout(workout));
+                card.appendChild(deleteBtn);
+            }
+
+            console.log("Appending delete button");
             container.appendChild(card);
         });
+    }
+
+    async function handleDeleteWorkout(workout) {
+        const isLoggedIn = document.getElementById("isUserLoggedIn")?.value === "true";
+
+        if (isLoggedIn) {
+            // Server-side deletion
+            const confirmed = confirm("Are you sure you want to delete this workout from your account?");
+            if (!confirmed) return;
+
+            try {
+                const response = await fetch(`/api/workoutapi/delete/${workout.id}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) throw new Error("Failed to delete workout from server");
+
+                showToast("Workout deleted successfully!");
+
+                // Relod updated workout list
+                const res = await fetch('/api/workoutapi/userworkouts');
+                if (!res.ok) throw new Error("Failed to fetch updated workouts after deletion");
+                const updated = await res.json();
+                displayWorkoutHistory(updated, document.getElementById('workoutHistoryContainer'));
+            } catch (err) {
+                console.error("Delete failed:", err);
+                alert("Error deleting workout. Try again.");
+            }
+        } else {
+            // LocalStorage deletion
+            const confirmed = confirm("Delete this workout from localStorage?");
+            if (!confirmed) return;
+
+            let workouts = loadJSON('workoutHistory') || [];
+            const flattenedWorkouts = workouts.flat();
+            const filteredWorkouts = flattenedWorkouts.filter(w => w.startTime !== workout.startTime);
+            saveJSON('workoutHistory', filteredWorkouts);
+
+            const container = document.getElementById('workoutHistoryContainer');
+            if (container) {
+                container.innerHTML = '';
+                displayWorkoutHistory(filteredWorkouts, container);
+            }
+        }
     }
 
     // If not on the workout history page
