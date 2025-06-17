@@ -9,25 +9,93 @@
     </div>
 
     <div id="exerciseList" class="exercise-list">
-        <label class="exercise-list-item">
-            <input type="checkbox" value="Pushups" />
-            <span>Pushups</span>
-        </label>
-        <label class="exercise-list-item">
-            <input type="checkbox" value="Barbell Bench Press" />
-            <span>Barbell Bench Press</span>
-        </label>
-        <label class="exercise-list-item">
-            <input type="checkbox" value="Barbell Back Squat" />
-            <span>Barbell Back Squat</span>
-        </label>
-        <label class="exercise-list-item">
-            <input type="checkbox" value="Barbell Deadlift" />
-            <span>Barbell Deadlift</span>
-        </label>
 
-    @* Add More Lifts Later HERE!!!*@
-    
+        <!-- Chest -->
+        <details open>
+            <summary>Chest</summary>
+            <label class="exercise-list-item"><input type="checkbox" value="Barbell Bench Press" /><span>Barbell Bench Press</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Dumbbell Bench Press" /><span>Dumbbell Bench Press</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Incline Bench Press" /><span>Incline Bench Press</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Decline Bench Press" /><span>Decline Bench Press</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Chest Fly (Machine)" /><span>Chest Fly (Machine)</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Pushups" /><span>Pushups</span></label>
+        </details>
+
+        <!-- Back -->
+        <details>
+            <summary>Back</summary>
+            <label class="exercise-list-item"><input type="checkbox" value="Pull-Ups" /><span>Pull-Ups</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Chin-Ups" /><span>Chin-Ups</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Lat Pulldown" /><span>Lat Pulldown</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Barbell Row" /><span>Barbell Row</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Dumbbell Row" /><span>Dumbbell Row</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Seated Cable Row" /><span>Seated Cable Row</span></label>
+        </details>
+
+        <!-- Shoulders -->
+        <details>
+            <summary>Shoulders</summary>
+            <label class="exercise-list-item"><input type="checkbox" value="Overhead Press" /><span>Overhead Press</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Dumbbell Shoulder Press" /><span>Dumbbell Shoulder Press</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Front Raise (Dumbbell)" /><span>Front Raise (Dumbbell)</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Lateral Raise" /><span>Lateral Raise</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Rear Delt Fly" /><span>Rear Delt Fly</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Arnold Press" /><span>Arnold Press</span></label>
+        </details>
+
+        <!-- Legs -->
+        <details>
+            <summary>Legs</summary>
+            <label class="exercise-list-item"><input type="checkbox" value="Barbell Back Squat" /><span>Barbell Back Squat</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Front Squat" /><span>Front Squat</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Leg Press" /><span>Leg Press</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Walking Lunge" /><span>Walking Lunge</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Bulgarian Split Squat" /><span>Bulgarian Split Squat</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Leg Curl (Machine)" /><span>Leg Curl (Machine)</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Leg Extension" /><span>Leg Extension</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Goblet Squat" /><span>Goblet Squat</span></label>
+        </details>
+
+        <!-- Glutes & Hamstrings -->
+        <details>
+            <summary>Glutes & Hamstrings</summary>
+            <label class="exercise-list-item"><input type="checkbox" value="Romanian Deadlift" /><span>Romanian Deadlift</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Glute Bridge" /><span>Glute Bridge</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Hip Thrust" /><span>Hip Thrust</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Cable Kickback" /><span>Cable Kickback</span></label>
+        </details>
+
+        <!-- Arms -->
+        <details>
+            <summary>Arms</summary>
+            <label class="exercise-list-item"><input type="checkbox" value="Barbell Curl" /><span>Barbell Curl</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Dumbbell Curl" /><span>Dumbbell Curl</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Hammer Curl" /><span>Hammer Curl</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Preacher Curl" /><span>Preacher Curl</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Tricep Pushdown" /><span>Tricep Pushdown</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Skullcrushers" /><span>Skullcrushers</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Overhead Tricep Extension" /><span>Overhead Tricep Extension</span></label>
+        </details>
+
+        <!-- Power / Olympic -->
+        <details>
+            <summary>Power / Olympic</summary>
+            <label class="exercise-list-item"><input type="checkbox" value="Deadlift" /><span>Deadlift</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Power Clean" /><span>Power Clean</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Hang Clean" /><span>Hang Clean</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Clean and Jerk" /><span>Clean and Jerk</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Snatch" /><span>Snatch</span></label>
+        </details>
+
+        <!-- Functional / Conditioning -->
+        <details>
+            <summary>Functional / Conditioning</summary>
+            <label class="exercise-list-item"><input type="checkbox" value="Sled Push" /><span>Sled Push</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Farmer's Carry" /><span>Farmer's Carry</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Burpees" /><span>Burpees</span></label>
+            <label class="exercise-list-item"><input type="checkbox" value="Medicine Ball Slams" /><span>Medicine Ball Slams</span></label>
+        </details>
+
     </div>
     <div class="exercise-modal-footer">
         <button id="startWorkoutBtn" class="btn-primary">Start Workout</button>

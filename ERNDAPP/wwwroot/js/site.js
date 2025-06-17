@@ -277,20 +277,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 const repsInput = document.createElement('input');
                 repsInput.type = 'number';
                 repsInput.placeholder = 'Reps';
-                repsInput.value = rep?.reps || 0;
+                repsInput.value = (typeof rep?.reps === 'number' && rep.reps > 0) ? rep.reps : '';
                 
                 const weightInput = document.createElement('input');
                 weightInput.type = 'number';
                 weightInput.placeholder = 'Weight (lbs)';
-                weightInput.value = rep?.weight || 0;
+                weightInput.value = (typeof rep?.weight === 'number' && rep.weight > 0) ? rep.weight : '';
 
                 repsInput.addEventListener('input', () => {
-                    repData[exercise][index].reps = parseInt(repsInput.value) || 0;
+                    repData[exercise][index].reps = repsInput.value === '' ? null : parseInt(repsInput.value);
                     saveJSON('repData', repData);
                 });
 
                 weightInput.addEventListener('input', () => {
-                    repData[exercise][index].weight = parseInt(weightInput.value) || 0;
+                    repData[exercise][index].weight = repsInput.value === '' ? null : parseInt(weightInput.value);
                     saveJSON('repData', repData);
                 });
                 
@@ -308,12 +308,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 const repsInput = document.createElement('input');
                 repsInput.type = 'number';
                 repsInput.placeholder = 'Reps';
-                repsInput.value = '0';
+                repsInput.value = '';
 
                 const weightInput = document.createElement('input');
                 weightInput.type = 'number';
                 weightInput.placeholder = 'Weight (lbs)';
-                weightInput.value = '0';
+                weightInput.value = '';
 
                 setsContainer.appendChild(repsInput);
                 setsContainer.appendChild(weightInput);
@@ -322,19 +322,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (!repData[exercise]) repData[exercise] = [];
 
                 // Push initial set data
-                repData[exercise].push({ reps: 0, weight: 0});
+                repData[exercise].push({ reps: null, weight: null});
                 saveJSON('repData', repData);
 
                 // If data was already inputted, restore it
                 const index = repData[exercise].length - 1;
 
                 repsInput.addEventListener('input', () => {
-                    repData[exercise][index].reps = parseInt(repsInput.value) || 0;
+                    repData[exercise][index].reps = repsInput.value === '' ? null : parseInt(repsInput.value);
                     saveJSON('repData', repData);
                 });
 
                 weightInput.addEventListener('input', () => {
-                    repData[exercise][index].weight = parseInt(weightInput.value) || 0;
+                    repData[exercise][index].weight = repsInput.value === '' ? null : parseInt(weightInput.value);
                     saveJSON('repData', repData);
                 });
             });
@@ -436,16 +436,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     .map(exerciseName => {
                         const sets = (repData[exerciseName] || [])
                             .map(set => ({
-                                reps: set.reps || 0,
+                                reps: set.reps ?? 0,
                                 // If weight is missing or blank, default to 0
-                                weight: set.weight || 0
+                                weight: set.weight ?? 0
                             }));
 
-                        if (sets.length === 0) return null;
-
-                        return { name: exerciseName, sets };
+                        return sets.length > 0 ? { name: exerciseName, sets } : null;
                     })
-                    .filter(exercise => exercise.sets.length > 0)
+                    .filter(Boolean)    // filters out nulls
             }
         ];
 
