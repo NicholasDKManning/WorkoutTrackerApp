@@ -233,3 +233,21 @@ body {
   cursor: pointer;
   color: red;
 }
+/* Social Icons */
+.social {
+    display: flex;
+    justify-content: center;
+    color: #9c9da0;
+    gap: 15px;
+}
+
+.social i {
+    font-size: 36px;
+    color: #9c9da0;
+    transition: transform 0.5s, color 0.5s;
+}
+
+.social i:hover {
+    color: #10237c;
+    transform: rotate(360deg);
+}
