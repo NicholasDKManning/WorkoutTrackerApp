@@ -3,10 +3,31 @@ using Microsoft.EntityFrameworkCore;
 using ERNDAPP.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using ERNDAPP.Data;
-var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("ERNDAPPIdentityDbContextConnection") ?? throw new InvalidOperationException("Connection string 'ERNDAPPIdentityDbContextConnection' not found.");
+using Resend;
+using Microsoft.Extensions.Options;
+using ERNDAPP.Models;
+using Polly;
+using Polly.Extensions.Http;
 
-builder.Services.AddDbContext<ERNDDbContext>(options => options.UseSqlServer(connectionString));
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<MyResendOptions>(builder.Configuration.GetSection("ResendClientOptions"));
+
+builder.Services.AddHttpClient<ResendClient>((sp, client) =>
+{
+    var config = sp.GetRequiredService<IOptions<MyResendOptions>>().Value;
+    if (string.IsNullOrEmpty(config.ApiKey))
+        throw new InvalidOperationException("Resend API key is missing from configuration.");
+
+    client.BaseAddress = new Uri("https://api.resend.com/");
+    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", config.ApiKey);
+})
+.AddTransientHttpErrorPolicy(p => p.RetryAsync(3));
+
+builder.Services.AddScoped<EmailService>();
+
+var connectionString = builder.Configuration.GetConnectionString("ERNDAPPIdentityDbContextConnection") ?? throw new InvalidOperationException("Connection string 'ERNDAPPIdentityDbContextConnection' not found.");
+builder.Services.AddDbContext<ERNDDbContext>(options => options.UseSqlite(connectionString));
 
 builder.Services.AddDefaultIdentity<ERNDUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ERNDDbContext>()
