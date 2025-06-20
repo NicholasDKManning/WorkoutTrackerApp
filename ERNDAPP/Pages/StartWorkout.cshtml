@@ -12,8 +12,9 @@
 <button class="btn btn-light w-100 text-start border rounded p-3 mb-2" id="openExerciseList">
     Start Your Workout
 </button>
+@* Button to go to View Workout History Page *@
+<a class="btn btn-light w-100 text-start border rounded p-3 mb-2" asp-area="" asp-page="/WorkoutHistory">View Workout History</a>
 
-@* Exercise Selection List *@
 @await Html.PartialAsync("_ExerciseModal")
 
 @* Current Workout Modal *@
