@@ -72,7 +72,7 @@ Demonstrate full-stack development using modern C# and Razor Pages technologies
 
 Professional Growth & Learning:
   Technical:
-    Developed full-stack web application skills with front-end and back-end development with JavaScript, C#, ASP.NET Core, and SQLite
+    Developed full-stack web application skills with front-end and back-end development with JavaScript, C#, ASP.NET Core, SQLite (Development), and PostgreSQL (Production)
     Gained hands-on exerience implementing user authentication and session management with ASP.NET Identity
     Integrated client-side logic with RESTful API calls to sync workout data between local storage and the server
     Gained skills in Cross-platform UI design
