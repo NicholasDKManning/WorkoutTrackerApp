@@ -95,6 +95,7 @@ body {
   transform: translateY(100%);
   transition: transform 0.3s ease-in-out;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   z-index: 1050;
 }
 
