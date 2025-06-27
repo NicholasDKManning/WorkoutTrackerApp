@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ERNDAPP.Areas.Identity.Data;
+using ERNDAPP.Services;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using ERNDAPP.Data;
 
@@ -12,6 +14,10 @@ var password = Environment.GetEnvironmentVariable("PGPASSWORD") ?? throw new Inv
 var port = Environment.GetEnvironmentVariable("PGPORT") ?? "5432";
 
 var connectionString = $"Host={host};Database={database};Username={username};Password={password};Port={port};Ssl Mode=Require";
+
+builder.Services.AddTransient<IEmailSender, EmailService>();
+
+builder.Services.AddHttpClient();   // For IHttpClientFactory
 
 builder.Services.AddDbContext<ERNDDbContext>(options => options.UseNpgsql(connectionString));
 
