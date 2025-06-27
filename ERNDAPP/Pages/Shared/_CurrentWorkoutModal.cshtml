@@ -8,24 +8,24 @@
 <body>
     @* Current Workout Modal *@
     <div id="currentWorkoutModal" class="modal hidden">
-        <div class ="modal-content">
+        <div class ="exercise-modal-container show">
             <!-- Modal Header -->
-            <div class="modal-header">
+            <div class="exercise-modal-header">
                 <h2>Current Workout</h2>
                 <button id="closeCurrentWorkoutBtn">X</button>            
             </div>
 
             <!-- List of the user picked exercises -->
-            <div id="exerciseWorkoutList">
+            <div id="exerciseWorkoutList" class="exercise-list">
                 
                 <!-- JS code for dynamically injecting the exercises and their respective reps, sets, etc. will go here -->
 
             </div>
 
             @* Footer Buttons *@
-            <div class="modal-buttons">
-                <button id="addMoreExercisesBtn">+ Add More Exercises</button>
-                <button id="finishWorkoutBtn">Finish Workout</button>
+            <div class="exercise-modal-footer">
+                <button id="addMoreExercisesBtn" class="btn-secondary">+ Add More Exercises</button>
+                <button id="finishWorkoutBtn" class="btn-primary">Finish Workout</button>
             </div>
         </div>
     </div>
