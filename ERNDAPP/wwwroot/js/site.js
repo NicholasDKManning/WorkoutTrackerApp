@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return value ? JSON.parse(value) : fallback;
         } catch (error) {
             console.error(`Error parsing localStorage key "${key}":`, error);
+            localStorage.removeItem(key);   // Clears corrupted data
             return fallback;
         }
     }
@@ -37,8 +38,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to save unsaved workouts to the server after login
     async function saveLocalWorkoutsToServer(workouts) {
         try {
-
-            const payload = workouts;
+            // Flatten in case there are nested arrays
+            const payload = workouts.flat();
 
             console.log("Payload being sent to server:", payload);
 
@@ -52,6 +53,10 @@ document.addEventListener('DOMContentLoaded', function () {
             await res.json();
 
             console.log("Unsaved workouts transferred to server.");
+
+            // --- CLEAN UP localStorage so future saves are not nested ---
+            saveJSON('workoutHistory', payload);    // payload is not a flat array
+
             // Clear the workouts from localStorage after successful save
             localStorage.removeItem('workoutHistory');
             
@@ -78,13 +83,13 @@ document.addEventListener('DOMContentLoaded', function () {
         // Workout History Page logic
         const isLoggedIn = document.getElementById("isUserLoggedIn")?.value === "true";
 
-        // Logd from server or localStorage based on login
+        // Load from server or localStorage based on login
         if (isLoggedIn) {
             // Check if there are unsaved workouts in localStorage
             const localWorkouts = loadJSON('workoutHistory');
             if (localWorkouts && localWorkouts.length > 0) {
-                console.log("Sending payload to server:", JSON.stringify(localWorkouts.flat(), null, 2));
-                saveLocalWorkoutsToServer(localWorkouts.flat());
+                console.log("Sending payload to server:", JSON.stringify(localWorkouts, null, 2));
+                saveLocalWorkoutsToServer(localWorkouts);
             }
 
             // Check if logged in
@@ -103,9 +108,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
         } else {
             const localWorkouts = loadJSON('workoutHistory') || [];
-            const flattenedWorkouts = localWorkouts.flat(); // flatten one level of nesting
-            console.log("Workouts loaded from localStorage (flattened):", flattenedWorkouts);
-            displayWorkoutHistory(flattenedWorkouts, historyContainer);
+            console.log("Workouts loaded from localStorage:", localWorkouts);
+            displayWorkoutHistory(localWorkouts, historyContainer);
         }
 
         return; // Don't run StartWorkout logic on workout history page
@@ -115,6 +119,11 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!onStartWorkoutPage) return;
 
     function displayWorkoutHistory(workouts, container) {
+
+        if (Array.isArray(workouts[0])) {
+            workouts = workouts.flat();
+        }
+
         if (!workouts || workouts.length === 0) {
             container.innerHTML = '<p>No Completed Workouts Have Been Logged Yet.</p>';
             return;
@@ -137,11 +146,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
             let exerciseHTML = '<ul>';
             workout.exercises.forEach(ex => {
+                console.log(`Displaying sets for ${ex.name}:`, ex.sets);
                 if (Array.isArray(ex.sets)) {
                     exerciseHTML += `<li><strong>${ex.name}</strong><ul>`;
+                    // Use array order for sets
                     ex.sets.forEach((set, i) => {
+                        const setNum = i + 1;
                         const weightText = set.weight ? ` @ ${set.weight} lbs` : '';
-                        exerciseHTML += `<li>Set ${i + 1}: ${set.reps} reps${weightText}</li>`;
+                        exerciseHTML += `<li>Set ${setNum}: ${set.reps} reps${weightText}</li>`;
                     });
                     exerciseHTML += `</ul></li>`;
                 } else {
@@ -200,8 +212,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!confirmed) return;
 
             let workouts = loadJSON('workoutHistory') || [];
-            const flattenedWorkouts = workouts.flat();
-            const filteredWorkouts = flattenedWorkouts.filter(w => w.startTime !== workout.startTime);
+            const filteredWorkouts = workouts.filter(w => w.startTime !== workout.startTime);
             saveJSON('workoutHistory', filteredWorkouts);
 
             const container = document.getElementById('workoutHistoryContainer');
@@ -218,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return; // Exit early when not on the StartWorkout page
     
     // Start Workout Page
-    // Butten to open the exercise selection modal
+    // Button to open the exercise selection modal
     let repData = loadJSON('repData');
     let setData = {};
     let timedExerciseData = {};
@@ -273,30 +284,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Automatically create inputs for each saved set
             const savedReps = repData[exercise] || [];
-            savedReps.forEach((rep, index) => {
+            savedReps.forEach(rep => {
                 const repsInput = document.createElement('input');
                 repsInput.type = 'number';
                 repsInput.placeholder = 'Reps';
                 repsInput.value = (typeof rep?.reps === 'number' && rep.reps > 0) ? rep.reps : '';
-                
+
                 const weightInput = document.createElement('input');
                 weightInput.type = 'number';
                 weightInput.placeholder = 'Weight (lbs)';
                 weightInput.value = (typeof rep?.weight === 'number' && rep.weight > 0) ? rep.weight : '';
 
                 repsInput.addEventListener('input', () => {
-                    repData[exercise][index].reps = repsInput.value === '' ? null : parseInt(repsInput.value);
+                    rep.reps = repsInput.value === '' ? null : parseInt(repsInput.value);
                     saveJSON('repData', repData);
                 });
 
                 weightInput.addEventListener('input', () => {
-                    repData[exercise][index].weight = repsInput.value === '' ? null : parseInt(weightInput.value);
+                    rep.weight = weightInput.value === '' ? null : parseInt(weightInput.value);
                     saveJSON('repData', repData);
                 });
-                
-                setsContainer.appendChild(repsInput)
-                setsContainer.appendChild(weightInput);
 
+                setsContainer.appendChild(repsInput);
+                setsContainer.appendChild(weightInput);            
             });
 
             // Button to add more sets
@@ -321,20 +331,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Makes sure repData[exercise] exists
                 if (!repData[exercise]) repData[exercise] = [];
 
-                // Push initial set data
-                repData[exercise].push({ reps: null, weight: null});
+                // Create a new set object (no setNumber)
+                const newSet = { 
+                    reps: null, 
+                    weight: null
+                };
+                repData[exercise].push(newSet);
                 saveJSON('repData', repData);
 
-                // If data was already inputted, restore it
-                const index = repData[exercise].length - 1;
-
+                // bind inputs directly to that set object
                 repsInput.addEventListener('input', () => {
-                    repData[exercise][index].reps = repsInput.value === '' ? null : parseInt(repsInput.value);
+                    newSet.reps = repsInput.value === '' ? null : parseInt(repsInput.value);
                     saveJSON('repData', repData);
                 });
 
                 weightInput.addEventListener('input', () => {
-                    repData[exercise][index].weight = repsInput.value === '' ? null : parseInt(weightInput.value);
+                    newSet.weight = weightInput.value === '' ? null : parseInt(weightInput.value);
                     saveJSON('repData', repData);
                 });
             });
@@ -409,43 +421,21 @@ document.addEventListener('DOMContentLoaded', function () {
         const selectedExercises = loadJSON('selectedExercises');
         const repData = loadJSON('repData');
 
-        // Update repData from the DOM before saving
-        document.querySelectorAll('.exercise-block').forEach(block => {
-        const exerciseName = block.querySelector('h3').textContent;
-        const inputs = Array.from(block.querySelectorAll('input'));
-        const sets = [];
-
-        // Input arranged as pairs: reps input followed by weight input
-        for (let i = 0; i < inputs.length; i += 2) {
-            const repsValue = parseInt(inputs[i].value, 10) || 0;
-            const weightValue = parseFloat(inputs[i + 1]?.value) || 0;
-            sets.push({ reps: repsValue, weight: weightValue });
-        }
-
-        repData[exerciseName] = sets;
-        });
-
         console.log("Selected exercises:", selectedExercises);
-        console.log("repData at save time:", repData);
+        console.log("repData just before saving workout:", JSON.stringify(repData, null, 2));
 
-        const finishedWorkout = [
-            {
-                startTime: startTime,
-                endTime: endTime,
-                exercises: selectedExercises
-                    .map(exerciseName => {
-                        const sets = (repData[exerciseName] || [])
-                            .map(set => ({
-                                reps: set.reps ?? 0,
-                                // If weight is missing or blank, default to 0
-                                weight: set.weight ?? 0
-                            }));
-
-                        return sets.length > 0 ? { name: exerciseName, sets } : null;
-                    })
-                    .filter(Boolean)    // filters out nulls
-            }
-        ];
+        const finishedWorkout = {
+            startTime: startTime,
+            endTime: endTime,
+            exercises: selectedExercises.map(exerciseName => {
+                // Fallback to empty array if no sets exist
+                const sets = (repData[exerciseName] || []).map(set => ({
+                    reps: set.reps ?? 0,
+                    weight: set.weight ?? 0
+                }));
+                return { name: exerciseName, sets };
+            })
+        };
 
         // Read whether the user is signed in
         const isLoggedIn = document.getElementById("isUserLoggedIn")?.value === "true";
@@ -492,6 +482,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const allWorkouts = loadJSON('workoutHistory');
             allWorkouts.push(finishedWorkout);
             localStorage.setItem('workoutHistory', JSON.stringify(allWorkouts));
+            console.log("Saved allWorkouts to localStorage:", allWorkouts);
         }
 
         // Cleanup
@@ -514,4 +505,10 @@ document.addEventListener('DOMContentLoaded', function () {
     addExerciseBtn?.addEventListener('click', () => {
         showExerciseModal();
     });
+
+    function updateViewportHeight() {
+        document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+    }
+    window.addEventListener('resize', updateViewportHeight);
+    window.addEventListener('load', updateViewportHeight);
 });

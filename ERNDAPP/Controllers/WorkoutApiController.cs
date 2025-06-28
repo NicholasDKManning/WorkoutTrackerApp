@@ -76,38 +76,52 @@ namespace ERNDAPP.Controllers
 
         // GET: api/workoutapi/userworkouts
         [HttpGet("userworkouts")]
-        public IActionResult GetUserWorkouts()
+        public async Task<IActionResult> GetUserWorkouts()
         {
-            // Make sure the user is authenticated
-            if (User?.Identity == null || !User.Identity.IsAuthenticated)
-                return Unauthorized();
+            try
+            {
+                // Make sure the user is authenticated
+                if (User?.Identity == null || !User.Identity.IsAuthenticated)
+                    return Unauthorized();
 
-            // Get the user's ID
-            var userId = User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier);
+                // Get the user's ID
+                var userId = User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier);
 
-            // Fetch workouts for this user with the exercises
-            var workouts = _dbContext.WorkoutSessions
-                .Where(ws => ws.UserId == userId)
-                .Select(ws => new
+                // Fetch workouts for this user with the exercises
+                var workouts = await _dbContext.WorkoutSessions
+                    .Where(ws => ws.UserId == userId)
+                    .Include(ws => ws.Exercises)
+                        .ThenInclude(e => e.Sets)
+                    .ToListAsync();
+
+                foreach (var workout in workouts)
                 {
-                    ws.Id,
-                    ws.StartTime,
-                    ws.EndTime,
-                    ws.UserId,
-                    Exercises = ws.Exercises.Select(e => new
+                    if (workout.Exercises != null)
                     {
-                        e.Name,
-                        Sets = e.Sets.Select(s => new
+                        workout.Exercises = workout.Exercises
+                            .OrderBy(e => e.Id)  // or another property if you want
+                            .ToList();
+
+                        foreach (var exercise in workout.Exercises)
                         {
-                            s.Reps,
-                            s.Weight
-                        }).ToList()
-                    }).ToList()
-                })
-                .OrderByDescending(ws => ws.StartTime)
-                .ToList();
-                
-            return Ok(workouts);
+                            if (exercise.Sets != null)
+                            {
+                                exercise.Sets = exercise.Sets
+                                    .OrderBy(s => s.Id)
+                                    .ToList();
+                            }
+                        }
+                    }
+                }
+
+                return Ok(workouts);
+            }
+            catch (Exception ex)
+            {
+                // Log the error (to console, file, or logger)
+                Console.WriteLine("Error in GetUserWorkouts: " + ex.ToString());
+                return StatusCode(500, "Internal server error: " + ex.Message);
+            }
         }
     }
 }

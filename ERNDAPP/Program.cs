@@ -22,7 +22,11 @@ builder.Services.AddIdentity<ERNDUser, IdentityRole>(options => options.SignIn.R
 
 // Add services to the container.
 builder.Services.AddRazorPages(options => options.Conventions.AuthorizePage("/Privacy"));
-builder.Services.AddControllers();  // Needed for API support
+builder.Services.AddControllers()  // Needed for API support
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
 
 var app = builder.Build();
 
