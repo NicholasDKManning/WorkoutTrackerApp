@@ -424,6 +424,20 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("Selected exercises:", selectedExercises);
         console.log("repData just before saving workout:", JSON.stringify(repData, null, 2));
 
+        document.querySelectorAll('.exercise-block').forEach(block => {
+            const exerciseName = block.querySelector('h3').textContent;
+            const inputs = Array.from(block.querySelectorAll('input'));
+            const sets = [];
+
+            for (let i = 0; i < inputs.length; i += 2) {
+                const repsValue = parseInt(inputs[i].value, 10) || 0;
+                const weightValue = parseFloat(inputs[i + 1]?.value) || 0;
+                sets.push({ reps: repsValue, weight: weightValue });
+            }
+
+            repData[exerciseName] = sets;
+        });
+
         const finishedWorkout = {
             startTime: startTime,
             endTime: endTime,
@@ -436,6 +450,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 return { name: exerciseName, sets };
             })
         };
+
+        console.log("repData before saving:", repData);
 
         // Read whether the user is signed in
         const isLoggedIn = document.getElementById("isUserLoggedIn")?.value === "true";
