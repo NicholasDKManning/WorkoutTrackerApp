@@ -451,7 +451,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(finishedWorkout)
+                    body: JSON.stringify([finishedWorkout])
                 });
 
                 if (response.ok) {
