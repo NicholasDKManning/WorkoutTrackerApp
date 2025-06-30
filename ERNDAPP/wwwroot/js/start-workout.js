@@ -1,198 +1,206 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const openButton = document.getElementById('openExerciseList');
-    if (!openButton) return;
-
-    let workoutFinished = false;
-    let repData = loadJSON('repData');
-    let setData = {};
-    let timedExerciseData = {};
-
-    const exerciseModal = document.getElementById('exerciseModal');
-    const cancelButton = document.getElementById('cancelWorkoutBtn');
-    const currentWorkoutModal = document.getElementById('currentWorkoutModal');
-    const exerciseWorkoutList = document.getElementById('exerciseWorkoutList');
-    const closeBtn = document.getElementById('closeCurrentWorkoutBtn');
-    const addExerciseBtn = document.getElementById('addMoreExercisesBtn');
-    const finishWorkoutBtn = document.getElementById('finishWorkoutBtn');
-    const startWorkoutBtn = document.getElementById('startWorkoutBtn');
-
-    function closeExerciseModal() {
-        exerciseModal.classList.remove('show');
-        exerciseModal.classList.add('hidden');
+(function() {
+    if (window.startWorkoutInitialized) {
+        console.log("Start Workout JS already initialized");
+        return
     }
-    function showExerciseModal() {
-        exerciseModal.classList.add('show');
-        exerciseModal.classList.remove('hidden');
-    }
+    window.startWorkoutInitialized = true;
 
-    function openCurrentWorkoutModal() {
-        const selectedExercises = loadJSON('selectedExercises');
-        exerciseWorkoutList.innerHTML = '';
-        selectedExercises.forEach((exercise) => {
-            const exerciseDiv = document.createElement('div');
-            exerciseDiv.className = 'exercise-block';
-            const title = document.createElement('h3');
-            title.textContent = exercise;
-            exerciseDiv.appendChild(title);
-            const setsContainer = document.createElement('div');
-            setsContainer.className = 'sets-container';
-            const savedReps = repData[exercise] || [];
-            savedReps.forEach(rep => {
-                const repsInput = document.createElement('input');
-                repsInput.type = 'number';
-                repsInput.placeholder = 'Reps';
-                repsInput.value = (typeof rep?.reps === 'number' && rep.reps > 0) ? rep.reps : '';
-                const weightInput = document.createElement('input');
-                weightInput.type = 'number';
-                weightInput.placeholder = 'Weight (lbs)';
-                weightInput.value = (typeof rep?.weight === 'number' && rep.weight > 0) ? rep.weight : '';
-                repsInput.addEventListener('input', () => {
-                    rep.reps = repsInput.value === '' ? null : parseInt(repsInput.value);
-                    saveJSON('repData', repData);
-                });
-                weightInput.addEventListener('input', () => {
-                    rep.weight = weightInput.value === '' ? null : parseInt(weightInput.value);
-                    saveJSON('repData', repData);
-                });
-                setsContainer.appendChild(repsInput);
-                setsContainer.appendChild(weightInput);
-            });
-            const addSetBtn = document.createElement('button');
-            addSetBtn.textContent = '+ Add Set';
-            addSetBtn.addEventListener('click', () => {
-                const repsInput = document.createElement('input');
-                repsInput.type = 'number';
-                repsInput.placeholder = 'Reps';
-                repsInput.value = '';
-                const weightInput = document.createElement('input');
-                weightInput.type = 'number';
-                weightInput.placeholder = 'Weight (lbs)';
-                weightInput.value = '';
-                setsContainer.appendChild(repsInput);
-                setsContainer.appendChild(weightInput);
-                if (!repData[exercise]) repData[exercise] = [];
-                const newSet = { reps: null, weight: null };
-                repData[exercise].push(newSet);
-                saveJSON('repData', repData);
-                repsInput.addEventListener('input', () => {
-                    newSet.reps = repsInput.value === '' ? null : parseInt(repsInput.value);
-                    saveJSON('repData', repData);
-                });
-                weightInput.addEventListener('input', () => {
-                    newSet.weight = weightInput.value === '' ? null : parseInt(weightInput.value);
-                    saveJSON('repData', repData);
-                });
-            });
-            exerciseDiv.appendChild(setsContainer);
-            exerciseDiv.appendChild(addSetBtn);
-            exerciseWorkoutList.appendChild(exerciseDiv);
-        });
-        currentWorkoutModal.classList.add('show');
-    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const openButton = document.getElementById('openExerciseList');
+        if (!openButton) return;
 
-    openButton?.addEventListener('click', () => {
-        exerciseModal.classList.add('show');
-    });
-    cancelButton?.addEventListener('click', closeExerciseModal);
+        let workoutFinished = false;
+        let repData = loadJSON('repData');
+        let setData = {};
+        let timedExerciseData = {};
 
-    startWorkoutBtn?.addEventListener('click', () => {
-        const startTime = new Date().toISOString();
-        localStorage.setItem('workoutStartTime', startTime);
-        const selectedExercises = Array.from(
-            document.querySelectorAll('#exerciseList input[type="checkbox"]:checked')
-        ).map(cb => cb.value);
-        localStorage.setItem('selectedExercises', JSON.stringify(selectedExercises));
-        closeExerciseModal();
-        openCurrentWorkoutModal();
-    });
+        const exerciseModal = document.getElementById('exerciseModal');
+        const cancelButton = document.getElementById('cancelWorkoutBtn');
+        const currentWorkoutModal = document.getElementById('currentWorkoutModal');
+        const exerciseWorkoutList = document.getElementById('exerciseWorkoutList');
+        const closeBtn = document.getElementById('closeCurrentWorkoutBtn');
+        const addExerciseBtn = document.getElementById('addMoreExercisesBtn');
+        const finishWorkoutBtn = document.getElementById('finishWorkoutBtn');
+        const startWorkoutBtn = document.getElementById('startWorkoutBtn');
 
-    closeBtn?.addEventListener('click', () => {
-        currentWorkoutModal.classList.remove('show');
-    });
-
-    const finishWorkoutHandler = async (event) => {
-        event?.preventDefault();
-        if (workoutFinished) return;
-        workoutFinished = true;
-        const endTime = new Date().toISOString();
-        const startTime = localStorage.getItem('workoutStartTime');
-        if (!startTime) {
-            alert("No start time found. You must start a workout first");
-            return;
+        function closeExerciseModal() {
+            exerciseModal.classList.remove('show');
+            exerciseModal.classList.add('hidden');
         }
-        const selectedExercises = loadJSON('selectedExercises');
-        const repData = loadJSON('repData');
-        document.querySelectorAll('.exercise-block').forEach(block => {
-            const exerciseName = block.querySelector('h3').textContent;
-            const inputs = Array.from(block.querySelectorAll('input'));
-            const sets = [];
-            for (let i = 0; i < inputs.length; i += 2) {
-                const repsValue = parseInt(inputs[i].value, 10) || 0;
-                const weightValue = parseFloat(inputs[i + 1]?.value) || 0;
-                sets.push({ reps: repsValue, weight: weightValue });
-            }
-            repData[exerciseName] = sets;
-        });
-        const finishedWorkout = {
-            startTime: startTime,
-            endTime: endTime,
-            exercises: selectedExercises.map(exerciseName => {
-                const sets = (repData[exerciseName] || []).map(set => ({
-                    reps: set.reps ?? 0,
-                    weight: set.weight ?? 0
-                }));
-                return { name: exerciseName, sets };
-            })
-        };
-        const isLoggedIn = document.getElementById("isUserLoggedIn")?.value === "true";
-        if (isLoggedIn) {
-            try {
-                const response = await fetch('/api/workoutapi/save', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify([finishedWorkout])
+        function showExerciseModal() {
+            exerciseModal.classList.add('show');
+            exerciseModal.classList.remove('hidden');
+        }
+
+        function openCurrentWorkoutModal() {
+            const selectedExercises = loadJSON('selectedExercises');
+            exerciseWorkoutList.innerHTML = '';
+            selectedExercises.forEach((exercise) => {
+                const exerciseDiv = document.createElement('div');
+                exerciseDiv.className = 'exercise-block';
+                const title = document.createElement('h3');
+                title.textContent = exercise;
+                exerciseDiv.appendChild(title);
+                const setsContainer = document.createElement('div');
+                setsContainer.className = 'sets-container';
+                const savedReps = repData[exercise] || [];
+                savedReps.forEach(rep => {
+                    const repsInput = document.createElement('input');
+                    repsInput.type = 'number';
+                    repsInput.placeholder = 'Reps';
+                    repsInput.value = (typeof rep?.reps === 'number' && rep.reps > 0) ? rep.reps : '';
+                    const weightInput = document.createElement('input');
+                    weightInput.type = 'number';
+                    weightInput.placeholder = 'Weight (lbs)';
+                    weightInput.value = (typeof rep?.weight === 'number' && rep.weight > 0) ? rep.weight : '';
+                    repsInput.addEventListener('input', () => {
+                        rep.reps = repsInput.value === '' ? null : parseInt(repsInput.value);
+                        saveJSON('repData', repData);
+                    });
+                    weightInput.addEventListener('input', () => {
+                        rep.weight = weightInput.value === '' ? null : parseInt(weightInput.value);
+                        saveJSON('repData', repData);
+                    });
+                    setsContainer.appendChild(repsInput);
+                    setsContainer.appendChild(weightInput);
                 });
-                if (response.ok) {
-                    const data = await response.json();
-                    alert(data.message || "Workout saved successfully!");
-                } else {
-                    const errorData = await response.json();
-                    alert(`Failed to save workout: ${errorData.message || errorData.title}`);
+                const addSetBtn = document.createElement('button');
+                addSetBtn.textContent = '+ Add Set';
+                addSetBtn.addEventListener('click', () => {
+                    const repsInput = document.createElement('input');
+                    repsInput.type = 'number';
+                    repsInput.placeholder = 'Reps';
+                    repsInput.value = '';
+                    const weightInput = document.createElement('input');
+                    weightInput.type = 'number';
+                    weightInput.placeholder = 'Weight (lbs)';
+                    weightInput.value = '';
+                    setsContainer.appendChild(repsInput);
+                    setsContainer.appendChild(weightInput);
+                    if (!repData[exercise]) repData[exercise] = [];
+                    const newSet = { reps: null, weight: null };
+                    repData[exercise].push(newSet);
+                    saveJSON('repData', repData);
+                    repsInput.addEventListener('input', () => {
+                        newSet.reps = repsInput.value === '' ? null : parseInt(repsInput.value);
+                        saveJSON('repData', repData);
+                    });
+                    weightInput.addEventListener('input', () => {
+                        newSet.weight = weightInput.value === '' ? null : parseInt(weightInput.value);
+                        saveJSON('repData', repData);
+                    });
+                });
+                exerciseDiv.appendChild(setsContainer);
+                exerciseDiv.appendChild(addSetBtn);
+                exerciseWorkoutList.appendChild(exerciseDiv);
+            });
+            currentWorkoutModal.classList.add('show');
+        }
+
+        openButton?.addEventListener('click', () => {
+            exerciseModal.classList.add('show');
+        });
+        cancelButton?.addEventListener('click', closeExerciseModal);
+
+        startWorkoutBtn?.addEventListener('click', () => {
+            const startTime = new Date().toISOString();
+            localStorage.setItem('workoutStartTime', startTime);
+            const selectedExercises = Array.from(
+                document.querySelectorAll('#exerciseList input[type="checkbox"]:checked')
+            ).map(cb => cb.value);
+            localStorage.setItem('selectedExercises', JSON.stringify(selectedExercises));
+            closeExerciseModal();
+            openCurrentWorkoutModal();
+        });
+
+        closeBtn?.addEventListener('click', () => {
+            currentWorkoutModal.classList.remove('show');
+        });
+
+        const finishWorkoutHandler = async (event) => {
+            event?.preventDefault();
+            if (workoutFinished) return;
+            workoutFinished = true;
+            const endTime = new Date().toISOString();
+            const startTime = localStorage.getItem('workoutStartTime');
+            if (!startTime) {
+                alert("No start time found. You must start a workout first");
+                return;
+            }
+            const selectedExercises = loadJSON('selectedExercises');
+            const repData = loadJSON('repData');
+            document.querySelectorAll('.exercise-block').forEach(block => {
+                const exerciseName = block.querySelector('h3').textContent;
+                const inputs = Array.from(block.querySelectorAll('input'));
+                const sets = [];
+                for (let i = 0; i < inputs.length; i += 2) {
+                    const repsValue = parseInt(inputs[i].value, 10) || 0;
+                    const weightValue = parseFloat(inputs[i + 1]?.value) || 0;
+                    sets.push({ reps: repsValue, weight: weightValue });
+                }
+                repData[exerciseName] = sets;
+            });
+            const finishedWorkout = {
+                startTime: startTime,
+                endTime: endTime,
+                exercises: selectedExercises.map(exerciseName => {
+                    const sets = (repData[exerciseName] || []).map(set => ({
+                        reps: set.reps ?? 0,
+                        weight: set.weight ?? 0
+                    }));
+                    return { name: exerciseName, sets };
+                })
+            };
+            const isLoggedIn = document.getElementById("isUserLoggedIn")?.value === "true";
+            if (isLoggedIn) {
+                try {
+                    const response = await fetch('/api/workoutapi/save', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify([finishedWorkout])
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        alert(data.message || "Workout saved successfully!");
+                    } else {
+                        const errorData = await response.json();
+                        alert(`Failed to save workout: ${errorData.message || errorData.title}`);
+                        const allWorkouts = loadJSON('workoutHistory');
+                        allWorkouts.push(finishedWorkout);
+                        localStorage.setItem('workoutHistory', JSON.stringify(allWorkouts));
+                    }
+                } catch (error) {
+                    alert(`Error saving workout: ${error.message}`);
                     const allWorkouts = loadJSON('workoutHistory');
                     allWorkouts.push(finishedWorkout);
                     localStorage.setItem('workoutHistory', JSON.stringify(allWorkouts));
                 }
-            } catch (error) {
-                alert(`Error saving workout: ${error.message}`);
+            } else {
                 const allWorkouts = loadJSON('workoutHistory');
                 allWorkouts.push(finishedWorkout);
                 localStorage.setItem('workoutHistory', JSON.stringify(allWorkouts));
             }
-        } else {
-            const allWorkouts = loadJSON('workoutHistory');
-            allWorkouts.push(finishedWorkout);
-            localStorage.setItem('workoutHistory', JSON.stringify(allWorkouts));
+            localStorage.removeItem('repData');
+            localStorage.removeItem('selectedExercises');
+            localStorage.removeItem('workoutStartTime');
+            exerciseWorkoutList.innerHTML = '';
+            currentWorkoutModal.classList.remove('show');
+            setTimeout(() => workoutFinished = false, 2000);
+        };
+
+        if (finishWorkoutBtn && !finishWorkoutBtn.dataset.listenerAttached) {
+            finishWorkoutBtn.addEventListener('click', finishWorkoutHandler);
+        finishWorkoutBtn.dataset.listenerAttached = true;
         }
-        localStorage.removeItem('repData');
-        localStorage.removeItem('selectedExercises');
-        localStorage.removeItem('workoutStartTime');
-        exerciseWorkoutList.innerHTML = '';
-        currentWorkoutModal.classList.remove('show');
-        setTimeout(() => workoutFinished = false, 2000);
-    };
 
-    if (finishWorkoutBtn && !window.workoutListenerAttached) {
-        finishWorkoutBtn.addEventListener('click', finishWorkoutHandler);
-        window.workoutListenerAttached = true;
-    }
+        addExerciseBtn?.addEventListener('click', () => {
+            showExerciseModal();
+        });
 
-    addExerciseBtn?.addEventListener('click', () => {
-        showExerciseModal();
+        function updateViewportHeight() {
+            document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+        }
+        window.addEventListener('resize', updateViewportHeight);
+        window.addEventListener('load', updateViewportHeight);
     });
-
-    function updateViewportHeight() {
-        document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
-    }
-    window.addEventListener('resize', updateViewportHeight);
-    window.addEventListener('load', updateViewportHeight);
-});
+})();

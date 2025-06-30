@@ -3,33 +3,49 @@
 @{
     ViewData["Title"] = "Home page";
 }
+<div class="index-container py-4">
+    <div class = text-center mb-4>
+        <h1 class="display-4 fw-bold">Welcome To ERND.</h1>
+        <p class="lead">Every Repetition Neutralizes Doubt</p>
+    </div>
 
-@* Title *@
-<div class="text-center">
-    <h1 class="display-4"><strong>Welcome To ERND.</strong></h1>
-    <p>Every Repetition Neutralizes Doubt</p>
+    <div class="social mb-4">
+        @* Social Icons *@
+        <a href="https://www.linkedin.com/in/nicholasmanning35/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+        <a href="https://nicholasdkmanning.github.io/Nick-Manning-Portfolio/" target="_blank"><i class="fa-solid fa-user-tie"></i></a>
+        <a href="https://www.instagram.com/nicholas.d.k.manning/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+    </div>
+
+    <div class="text-center mb-3">
+        <p>Please click the buttons below for Installation & Updates info:</p>
+    </div>
+
+    <div class="d-flex flex-wrap gap-3 justify-content-center mb-4">
+        @* Installation Buttons *@
+
+        @* Button for how to install ERND --> IOS *@
+        <button class="index-btn btn-light text-start border rounded p-3 flex-grow-1" id="openHowToList-ios" style="min-width: 250px;">
+            📱 How To Install on IOS
+        </button>
+        
+        @* Button for how to install ERND --> ANDROID *@
+        <button class="index-btn btn-light text-start border rounded p-3 flex-grow-1" id="openHowToList-android" style="minwidth: 250px;">
+            🤖 How To Install on Android
+        </button>
+    </div>
+
+    <div class="mb-4">
+        <button class="index-btn btn-outline-primary w-100 p-3" id="openUpdatesList">
+            🛠 See the Latest Updates & Bug Fixes
+        </button>
+    </div>
 </div>
-
-@* Social Icons *@
-<div class="social">
-    <a href="https://www.linkedin.com/in/nicholasmanning35/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
-    <a href="https://www.instagram.com/nicholas.d.k.manning/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-    <a href="https://nicholasdkmanning.github.io/Nick-Manning-Portfolio/" target="_blank"><i class="fa-solid fa-user-tie"></i></a>
-</div>
-
-@* Please read line *@
-<div class="text-center">
-    <p>Please Click The Buttons Below & Read The Information On How To Use The ERND App & Other Important Information.</p>
-</div>
-
-<hr />
-
-@* Button for updates *@
-<button class="btn btn-light w-100 text-start border rounded p-3 mb-2" id="openUpdatesList">
-    Click Here To See The Latest Updates & Bug Fixes
-</button>
 
 @await Html.PartialAsync("_ErndUpdatesModal")
+
+@await Html.PartialAsync("_HowToInstallModal-Ios")
+
+@await Html.PartialAsync("_HowToInstallModal-Android")
 
 @section Scripts {
     <script src="~/js/shared.js"></script>

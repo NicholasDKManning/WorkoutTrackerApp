@@ -1,4 +1,4 @@
-console.log("Site.JS is running!");
+console.log("JS is running!");
 
 function showToast(message, duration = 3000) {
     const toast = document.createElement('div');

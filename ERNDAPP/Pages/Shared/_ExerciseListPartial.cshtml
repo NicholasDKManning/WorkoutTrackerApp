@@ -1,0 +1,258 @@
+@{
+    bool readOnly = ViewData["ReadOnly"] as bool? ?? false;
+}
+
+<div id="exerciseList" class="exercise-list">
+
+    <!-- Chest -->
+    <details>
+        <summary>Chest</summary>
+        @foreach (var exercise in new[] {
+
+            "Barbell Bench Press", 
+            "Dumbbell Bench Press", 
+            "Close Grip Barbell Bench Press",
+            "Incline Bench Press", 
+            "Decline Bench Press", 
+            "Chest Fly (Machine)",
+            "Pushups", 
+            "Dips", 
+            "Dumbbell Pullovers" })
+
+        {
+            if (readOnly)
+            {
+                <div class="exercise-list-item">@exercise</div>
+            }
+            else
+            {
+                <label class="exercise-list-item">
+                    <input type="checkbox" value="@exercise" />
+                    <span>@exercise</span>
+                </label>
+            }
+        }
+    </details>
+
+    <!-- Back -->
+    <details>
+        <summary>Back</summary>
+        @foreach (var exercise in new[] {
+
+            "Pull-Ups",
+            "Chin-Ups",
+            "Lat Pulldown",
+            "Barbell Row",
+            "Dumbbell Row",
+            "Seated Cable Row" })
+
+        {
+            if (readOnly)
+            {
+                <div class="exercise-list-item">@exercise</div>
+            }
+            else
+            {
+                <label class="exercise-list-item">
+                    <input type="checkbox" value="@exercise" />
+                    <span>@exercise</span>
+                </label>
+            }
+        }
+    </details>
+    
+    <!-- Shoulders -->
+    <details>
+        <summary>Shoulders</summary>
+        @foreach (var exercise in new[] {
+
+            "Barbell Overhead Press",
+            "Dumbbell Overhead Press",
+            "Dumbbell Shoulder Press",
+            "Barbell Shrugs",
+            "Dumbbell Shrugs",
+            "Front Raise (Dumbbell)",
+            "Lateral Raise",
+            "Rear Delt Fly",
+            "Arnold Press",
+            "T-Bar Row" })
+
+        {
+            if (readOnly)
+            {
+                <div class="exercise-list-item">@exercise</div>
+            }
+            else
+            {
+                <label class="exercise-list-item">
+                    <input type="checkbox" value="@exercise" />
+                    <span>@exercise</span>
+                </label>
+            }
+        }
+    </details>
+
+    <!-- Legs -->
+    <details>
+        <summary>Legs</summary>
+        @foreach (var exercise in new[] {
+
+            "Barbell Back Squat",
+            "Barbell Front Squat",
+            "Barbell Hack Squat",
+            "Leg Press",
+            "Walking Lunge",
+            "Bulgarian Split Squat",
+            "Leg Curl (Machine)",
+            "Lying Leg Curl",
+            "Leg Extension",
+            "Goblet Squat",
+            "Step-ups" })
+
+        {
+            if (readOnly)
+            {
+                <div class="exercise-list-item">@exercise</div>
+            }
+            else
+            {
+                <label class="exercise-list-item">
+                    <input type="checkbox" value="@exercise" />
+                    <span>@exercise</span>
+                </label>
+            }
+        }
+    </details>
+    
+    <!-- Glutes & Hamstrings -->
+    <details>
+        <summary>Glutes & Hamstrings</summary>
+        @foreach (var exercise in new[] {
+
+            "Romanian Deadlift",
+            "Glute Bridge",
+            "Hip Thrust",
+            "Cable Kickback" })
+
+        {
+            if (readOnly)
+            {
+                <div class="exercise-list-item">@exercise</div>
+            }
+            else
+            {
+                <label class="exercise-list-item">
+                    <input type="checkbox" value="@exercise" />
+                    <span>@exercise</span>
+                </label>
+            }
+        }
+    </details>
+    
+    <!-- Arms -->
+    <details>
+        <summary>Arms</summary>
+        @foreach (var exercise in new[] {
+
+            "Barbell Curl",
+            "Dumbbell Curl",
+            "Hammer Curl",
+            "Concentration Curl",
+            "Preacher Curl",
+            "Tricep Pushdown",
+            "Skullcrushers",
+            "Skullcrushers (EZ Bar)",
+            "Overhead Tricep Extension" })
+
+        {
+            if (readOnly)
+            {
+                <div class="exercise-list-item">@exercise</div>
+            }
+            else
+            {
+                <label class="exercise-list-item">
+                    <input type="checkbox" value="@exercise" />
+                    <span>@exercise</span>
+                </label>
+            }
+        }
+    </details>
+
+    <!-- Power / Olympic -->
+    <details>
+        <summary>Power / Olympic</summary>
+        @foreach (var exercise in new[] {
+
+            "Deadlift",
+            "Power Clean",
+            "Hang Clean",
+            "Clean and Jerk",
+            "Snatch" })
+
+        {
+            if (readOnly)
+            {
+                <div class="exercise-list-item">@exercise</div>
+            }
+            else
+            {
+                <label class="exercise-list-item">
+                    <input type="checkbox" value="@exercise" />
+                    <span>@exercise</span>
+                </label>
+            }
+        }
+    </details>
+    
+    <!-- Functional / Conditioning -->
+    <details>
+        <summary>Functional / Conditioning</summary>
+        @foreach (var exercise in new[] {
+
+            "Sled Push",
+            "Farmer's Carry",
+            "Burpees",
+            "Medicine Ball Slams",
+            "Battle Ropes" })
+
+        {
+            if (readOnly)
+            {
+                <div class="exercise-list-item">@exercise</div>
+            }
+            else
+            {
+                <label class="exercise-list-item">
+                    <input type="checkbox" value="@exercise" />
+                    <span>@exercise</span>
+                </label>
+            }
+        }
+    </details>
+    
+    <!-- Plyos -->
+    <details>
+        <summary>Plyometrics</summary>
+        @foreach (var exercise in new[] {
+
+            "Lateral Bounds",
+            "Broad Jumps",
+            "Jump Squats" })
+
+        {
+            if (readOnly)
+            {
+                <div class="exercise-list-item">@exercise</div>
+            }
+            else
+            {
+                <label class="exercise-list-item">
+                    <input type="checkbox" value="@exercise" />
+                    <span>@exercise</span>
+                </label>
+            }
+        }
+    </details>
+</div>
+

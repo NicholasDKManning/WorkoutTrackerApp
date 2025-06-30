@@ -1,34 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
+@* Current Workout Modal *@
+<div id="currentWorkoutModal" class="modal hidden">
+    <div class ="current-workout-modal-container show">
+        <!-- Modal Header -->
+        <div class="current-workout-modal-header">
+            <h2>Current Workout</h2>
+            <button id="closeCurrentWorkoutBtn">X</button>            
+        </div>
 
-<head>
-    <meta charset="UTF-8">
-</head>
+        <!-- List of the user picked exercises -->
+        <div id="exerciseWorkoutList" class="current-workout-list">
+            
+            <!-- JS code for dynamically injecting the exercises and their respective reps, sets, etc. will go here -->
 
-<body>
-    @* Current Workout Modal *@
-    <div id="currentWorkoutModal" class="modal hidden">
-        <div class ="current-workout-modal-container show">
-            <!-- Modal Header -->
-            <div class="current-workout-modal-header">
-                <h2>Current Workout</h2>
-                <button id="closeCurrentWorkoutBtn">X</button>            
-            </div>
+        </div>
 
-            <!-- List of the user picked exercises -->
-            <div id="exerciseWorkoutList" class="current-workout-list">
-                
-                <!-- JS code for dynamically injecting the exercises and their respective reps, sets, etc. will go here -->
-
-            </div>
-
-            @* Footer Buttons *@
-            <div class="exercise-modal-footer">
-                <button id="addMoreExercisesBtn" class="btn-secondary">+ Add More Exercises</button>
-                <button id="finishWorkoutBtn" class="btn-primary">Finish Workout</button>
-            </div>
+        @* Footer Buttons *@
+        <div class="exercise-modal-footer">
+            <button id="addMoreExercisesBtn" class="btn-secondary">+ Add More Exercises</button>
+            <button id="finishWorkoutBtn" class="btn-primary">Finish Workout</button>
         </div>
     </div>
-    <script src="~/js/site.js"></script>
-</body>
-</html>
+</div>

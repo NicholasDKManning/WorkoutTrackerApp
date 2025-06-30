@@ -1,0 +1,10 @@
+@page
+@model ERNDAPP.Pages.ExercisesModel
+@{
+    ViewData["Title"] = "All Exercises";
+    ViewData["ReadOnly"] = true;
+}
+
+<h2 class="mb-3">All Available Exercises</h2>
+
+@await Html.PartialAsync("_ExerciseListPartial")
