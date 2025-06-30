@@ -84,6 +84,59 @@ body {
   background-color: #f0f0f5;
 }
 
+/* Updates & Bug Fixes Modal Container */
+
+.updates-modal-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: calc(var(--vh, 1vh) * 90);
+  background: #ffffff;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.3s ease-in-out;
+  -webkit-overflow-scrolling: touch;
+  z-index: 1050;
+}
+
+/* Show The Modal */
+.updates-modal-container.show {
+  transform: translateY(0);
+}
+
+/* Header With A Bolded Title */
+.updates-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  z-index: 1;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #ccc;
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+/* Exercise List Scrollable Area */
+.updates-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1 1 auto;
+  max-height: calc(90vh - 130px);
+  height: 100%;
+  overflow-y: auto;
+  padding: 0;
+  margin: 0;
+}
+
 /* Current Workout Modal Container */
 
 .current-workout-modal-container {

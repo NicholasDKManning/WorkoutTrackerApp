@@ -227,6 +227,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const openButton = document.getElementById('openExerciseList');
     if (!openButton) 
         return; // Exit early when not on the StartWorkout page
+
+    // // If not on the Index Page
+    // const openUpdatesButton = document.getElementById('openUpdatesList')
+    // if (!openUpdatesButton)
+    //     return; // Exit early when not on the Index Page
     
     // Start Workout Page
     // Button to open the exercise selection modal
@@ -236,6 +241,8 @@ document.addEventListener('DOMContentLoaded', function () {
     
     // DOM elements for modals and buttons
     const exerciseModal = document.getElementById('exerciseModal');                 // Modal for selecting exercises
+    const updatesListModal = document.getElementById('updatesModal')                // Modal for Updates and Bug Fixes List
+    const cancelUpdatesButton = document.getElementById('cancelUpdatesBtn');         // Button for closing the updates and Bug fixes list
     const cancelButton = document.getElementById('cancelWorkoutBtn');               // Button for cacelling the exercise selection
     const currentWorkoutModal = document.getElementById('currentWorkoutModal');     // Modal that shows all selected exercises
     const exerciseWorkoutList = document.getElementById('exerciseWorkoutList');     // Container that holds exercise inputs
@@ -244,13 +251,35 @@ document.addEventListener('DOMContentLoaded', function () {
     const finishWorkoutBtn = document.getElementById('finishWorkoutBtn');           // Button that completes the current workout and saves (Not Finished)
     const startWorkoutBtn = document.getElementById('startWorkoutBtn');             // Button to start the workout with the selected exercises
 
-    // Hide the Modal
+    // // Show Updates List Modal
+    // function showUpdatesModal() {
+    //     updatesListModal.classList.add('show');
+    // }
+
+    // // When someone hits the open updates button to open the Updates modal, Show the updates modal
+    // openUpdatesButton?.addEventListener('click', () => {
+    //     console.log('Open updates clicked');
+    //     showUpdatesModal();
+    // });
+
+    // // Hide Updates List Modal
+    // function closeUpdatesModal() {
+    //     updatesListModal.classList.remove('show');
+    // }
+
+    // // When someone hits the cancel updates button, cancel showing the updates modal
+    // cancelUpdatesButton?.addEventListener('click', () => {
+    //     console.log('Cancel Updates click');
+    //     closeUpdatesModal();
+    // });
+
+    // Hide the Exercise Selection Modal
     function closeExerciseModal() {
         exerciseModal.classList.remove('show');
         exerciseModal.classList.add('hidden');
     }
 
-    // Show the Modal
+    // Show the Exercise Selection Modal
     function showExerciseModal() {
         exerciseModal.classList.add('show');        
         exerciseModal.classList.remove('hidden');

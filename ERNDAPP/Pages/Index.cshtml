@@ -4,72 +4,29 @@
     ViewData["Title"] = "Home page";
 }
 
+@* Title *@
 <div class="text-center">
     <h1 class="display-4"><strong>Welcome To ERND.</strong></h1>
     <p>Every Repetition Neutralizes Doubt</p>
 </div>
+
+@* Social Icons *@
 <div class="social">
     <a href="https://www.linkedin.com/in/nicholasmanning35/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
     <a href="https://www.instagram.com/nicholas.d.k.manning/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
     <a href="https://nicholasdkmanning.github.io/Nick-Manning-Portfolio/" target="_blank"><i class="fa-solid fa-user-tie"></i></a>
 </div>
+
+@* Please read line *@
 <div class="text-center">
-    <p>Please Read The Information Below For Important App Details.</p>
+    <p>Please Click The Buttons Below & Read The Information On How To Use The ERND App & Other Important Information.</p>
 </div>
 
 <hr />
 
-    <h2 class="mt-4">🛠 Latest Updates & Bug Fixes </h2>
-    <p><em>Last updated: June 29, 2025</em></p>
-    <ul>
+@* Button for updates *@
+<button class="btn btn-light w-100 text-start border rounded p-3 mb-2" id="openUpdatesList">
+    Click Here To See The Latest Updates & Bug Fixes
+</button>
 
-        <li>Fixed issue where workout information (Sets, Reps, Weight) not displaying in workout history page</li>
-        <li>Fixed issue where sets were saving out of order</li>
-        <li>Fixed issue where full workout was not visible if there was too much information on the page</li>
-        <li>Added more exercises</li>
-        <li>Fixed account registration failure issue</li>
-
-    </ul>
-    <h2 class="mt-4">🐞 Known Bugs / Issues </h2>
-    <ul>
-        <li>issue where sets were saving out of order</li>
-        <li>Reset Password Emails Not Being Sent <STRONG>PLEASE WRITE DOWN YOUR PASSWORD FOR THE TIME BEING... THIS IS THE MAIN BUG RIGHT NOW</STRONG></li>
-        <li>Incomplete Workouts Log Being Lost</li>
-        <li>Duplication of Workouts When Finishing a Workout</li>
-        <li>Some button tap targets may be small on iOS Safari</li>
-        <li>Clicking username (email) Gives an Unhadnled Exception Internal Server Error</li>
-    </ul>
-
-    <p class="mt-4">
-        If you spot any bugs or have suggestions, please reach out via email, LinkedIn, or Instagram. Your feedback helps shape ERND into the best version of itself.
-    </p>
-
-<div class="container mt-4">
-    <h2>✅ Current Features </h2>
-    <ul>
-        <li>Mobile-style design for a clean and simple workout tracking experience</li>
-        <li>Categorzied List of Exercises</li>
-        <li>Detailed set tracking accessibility (reps and weight)</li>
-        <li>Automatic Workout Saving on Completion</li>
-        <li>View past workouts with full breakdown</li>
-        <li>Ability to Save Workouts Without an Account (Workout History Will Be Lost If Browser History is Deleted --> Highly Recommend Registering an Account</li>
-    </ul>
-
-    <h2 class="mt-4">🔜 Coming Soon </h2>
-    <ul>
-        <li>Forgot Password Emails</li>
-        <li>Progressive Web App (PWA) Installation Support</li>
-        <li>User Profile Management (Update Email, Preferred Account Naming, Password, Delete Account)</li>
-        <li>Custom Workout Naming</li>
-        <li>Add Notes to Current or Saved Workouts</li>
-        <li>Pause and Revisit Incomplete Workouts</li>
-        <li>Search For Specific Exercises in Exercise Selection Modal</li>
-        <li>Add Custom Exercises to Exercise Selection Modal</li>
-    </ul>
-
-</div>
-<div class="social">
-    <a href="https://www.linkedin.com/in/nicholasmanning35/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
-    <a href="https://www.instagram.com/nicholas.d.k.manning/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-    <a href="https://nicholasdkmanning.github.io/Nick-Manning-Portfolio/" target="_blank"><i class="fa-solid fa-user-tie"></i></a>
-</div>
+@await Html.PartialAsync("_ErndUpdatesModal")
