@@ -112,7 +112,7 @@ body {
 /* Header With A Bolded Title */
 .updates-modal-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   position: sticky;
   top: 0;
@@ -124,7 +124,7 @@ body {
   font-size: 1.25rem;
 }
 
-/* Exercise List Scrollable Area */
+/* Updates List Scrollable Area */
 .updates-list {
   display: flex;
   flex-direction: column;
@@ -136,6 +136,22 @@ body {
   padding: 0;
   margin: 0;
 }
+
+/* Updates List Footer */
+.updates-modal-footer {
+  border-top: 1px solid #ccc;
+  position: sticky;
+  bottom: 0;
+  background: #fff;           
+  text-align: center;
+  padding: .25rem 1.5rem;      
+}
+
+.updates-modal-footer p {
+  margin: 0;
+  font-style: italic;         
+}
+
 
 /* Current Workout Modal Container */
 
@@ -333,7 +349,28 @@ body {
   transition: background-color 0.2s ease-in-out;
 }
 
+/* Close Updates List */
+.btn-close-updates {
+  background-color: #f2f2f7;
+  color: #007aff;
+  border: none;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  min-width: 120px;
+}
+
 .btn-secondary:hover {
+  background-color: #d6d6db;
+}
+
+.btn-close-updates:hover {
   background-color: #d6d6db;
 }
 

@@ -32,3 +32,5 @@ appsettings.Development.json
 appsettings.Production.json
 appsettings.json
 
+# Scripts
+/wwwroot/js/site.js
