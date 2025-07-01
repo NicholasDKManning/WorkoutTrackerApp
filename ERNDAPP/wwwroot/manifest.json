@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#f2f2f7",
     "theme_color": "#007aff",
-    "description": "A mobile-style workout tracker",
+    "description": "A clean and responsive workout tracker app",
     "orientation": "portrait",
     "screenshots": [
         {
