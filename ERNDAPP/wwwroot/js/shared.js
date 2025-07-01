@@ -26,3 +26,11 @@ function loadJSON(key, fallback = []) {
 function saveJSON(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
 }
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(reg => console.log('Service Worker registered:', reg.scope))
+            .catch(err => console.error('Service Worker registration failed:', err));
+    });
+}
