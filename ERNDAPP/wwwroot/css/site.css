@@ -45,22 +45,37 @@ body {
 
 /* Update Toast for APP Updates popup styling */
 .toast.update-toast {
-  position: fixed;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #007aff;
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 1rem;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  cursor: pointer;
-  z-index: 9999;
-  transition: opacity 0.5s ease;
+    position: fixed !important;
+    bottom: 2rem !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    background: #ffffff !important;
+    color: #007aff !important;
+    border: 2px solid #007aff !important;
+    border-radius: 16px !important;
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 16px rgba(0, 122, 255, 0.08) !important;
+    z-index: 999999 !important;
+    opacity: 1 !important;
+    pointer-events: all !important;
+    display: block !important;
+    padding: 1rem 2rem !important;
+    transition: 
+        opacity 0.3s cubic-bezier(.4,0,.2,1),
+        transform 0.3s cubic-bezier(.4,0,.2,1);
+}
+
+.toast.update-toast.show {
+    opacity: 1 !important;
+    transform: translateX(-50%) translateY(0) !important; /* Slide up */
+    pointer-events: all !important;
 }
 
 .toast.update-toast.hide {
-  opacity: 0;
+    opacity: 0 !important;
+    transform: translateX(-50%) translateY(40px) !important; /* Slide down */
+    pointer-events: none !important;
 }
 
 /* Index Container */
