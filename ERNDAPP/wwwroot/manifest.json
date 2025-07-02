@@ -5,24 +5,24 @@
     "display": "standalone",
     "background_color": "#f2f2f7",
     "theme_color": "#007aff",
-    "description": "A clean and responsive workout tracker app",
+    "description": "ERND is a clean, easy to use workout tracker progressive web app.",
     "orientation": "portrait",
     "screenshots": [
         {
-            "src": "/screenshots/wide-screenshot.png",
+            "src": "https://nicholasdkmanning.github.io/ernd-assets/screenshots/wide-screenshot.png",
             "sizes": "1280x720",
             "type": "image/png",
             "form_factor": "wide"
         },
         {
-            "src": "/screenshots/narrow-screenshot.png",
+            "src": "https://nicholasdkmanning.github.io/ernd-assets/screenshots/narrow-screenshot.png",
             "sizes": "375x667",
             "type": "image/png",
             "form_factor": "narrow"
         }
         ,
         {
-            "src": "/screenshots/narrow-2-screenshot.png",
+            "src": "https://nicholasdkmanning.github.io/ernd-assets/screenshots/narrow-2-screenshot.png",
             "sizes": "1125x2436",
             "type": "image/png"
         }
@@ -30,12 +30,12 @@
     ],
     "icons": [
         {
-            "src": "/icons/icon-192.png",
+            "src": "https://nicholasdkmanning.github.io/ernd-assets/icons/icon-192.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "/icons/icon-512.png",
+            "src": "https://nicholasdkmanning.github.io/ernd-assets/icons/icon-512.png",
             "sizes": "512x512",
             "type": "image/png"
         }

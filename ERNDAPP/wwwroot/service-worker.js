@@ -1,5 +1,5 @@
 // service-worker.js
-const CACHE_VERSION = 'ernd-cachee-v2'; // To force updates change v2
+const CACHE_VERSION = 'ernd-cache-v2'; // To force updates change v2
 self.addEventListener('install', () => self.skipWaiting());
 
 self.addEventListener('activate', event => {
@@ -12,3 +12,10 @@ self.addEventListener('activate', event => {
   );
   self.clients.claim();
 });
+
+// Listen for message from the page
+self.addEventListener('message', event => {
+  if (event.data?.action === 'skipWaiting') {
+    self.skipWaiting();
+  }
+})
