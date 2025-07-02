@@ -550,40 +550,59 @@ header .nvabar {
   cursor: pointer;
   color: red;
 }
+
 /* Social Icons */
 .social {
     display: flex;
     justify-content: center;
-    color: #9c9da0;
-    gap: 15px;
+    gap: 24px;
 }
 
-.social i {
+.social-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.social-item a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.social .material-symbols-outlined {
     font-size: 36px;
     color: #9c9da0;
     transition: transform 0.5s, color 0.5s;
 }
 
-.social i:hover {
+.social .material-symbols-outlined:hover {
     color: #10237c;
     transform: rotate(360deg);
 }
 
+.social-label {
+    margin-top: 0.25rem;
+    font-size: 14px;
+    color: #9c9da0;
+}
+
+
 /* Privacy Policy */
 .privacy-policy {
-        max-width: 800px;
-        margin: 2rem auto;
-        padding: 1rem;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        line-height: 1.6;
-    }
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+}
 
-    .privacy-policy h1 {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-    }
+.privacy-policy h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
 
-    .privacy-policy h2 {
-        margin-top: 1.5rem;
-        font-size: 1.25rem;
-    }
+.privacy-policy h2 {
+  margin-top: 1.5rem;
+  font-size: 1.25rem;
+}
