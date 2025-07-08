@@ -35,11 +35,81 @@
         function openCurrentWorkoutModal() {
             const selectedExercises = loadJSON('selectedExercises');
             exerciseWorkoutList.innerHTML = '';
+
+            const instruction = document.createElement('div');
+            instruction.className = 'reorder-instruction';
+            instruction.textContent = 'You may now reorder exercises by dragging near the exercise name';
+            exerciseWorkoutList.appendChild(instruction);
+
+            const SCROLL_EDGE_THRESHOLD = 80; // px
+            const SCROLL_SPEED = 6; // px per frame
+
+            let scrollInterval = null;
+
+            exerciseWorkoutList.addEventListener('dragover', (e) => {
+                const bounding = exerciseWorkoutList.getBoundingClientRect();
+
+                const scrollUp = e.clientY < bounding.top + SCROLL_EDGE_THRESHOLD;
+                const scrollDown = e.clientY > bounding.bottom - SCROLL_EDGE_THRESHOLD;
+
+                if (scrollUp) {
+                    if (!scrollInterval) {
+                        scrollInterval = setInterval(() => {
+                            exerciseWorkoutList.scrollBy(0, -SCROLL_SPEED);
+                        }, 16); // roughly 60fps
+                    }
+                } else if (scrollDown) {
+                    if (!scrollInterval) {
+                        scrollInterval = setInterval(() => {
+                            exerciseWorkoutList.scrollBy(0, SCROLL_SPEED);
+                        }, 16);
+                    }
+                } else {
+                    clearInterval(scrollInterval);
+                    scrollInterval = null;
+                }
+            });
+
+            exerciseWorkoutList.addEventListener('dragleave', () => {
+                clearInterval(scrollInterval);
+                scrollInterval = null;
+            });
+
+            exerciseWorkoutList.addEventListener('drop', () => {
+                clearInterval(scrollInterval);
+                scrollInterval = null;
+            });
+
             selectedExercises.forEach((exercise) => {
                 const exerciseDiv = document.createElement('div');
                 exerciseDiv.className = 'exercise-block';
                 const title = document.createElement('h3');
                 title.textContent = exercise;
+
+                exerciseDiv.id = 'exerciseDivId'
+                exerciseDiv.draggable = 'true'
+                exerciseDiv.dataset.name = exercise;
+                exerciseDiv.addEventListener('dragstart', (event) => {
+                    event.dataTransfer.setData('text/plain', exercise);
+                    event.target.style.opacity = '0.5';
+                });
+                
+                exerciseDiv.addEventListener('dragover', (event) => {
+                    event.preventDefault();
+                });
+                
+                exerciseDiv.addEventListener('drop', (event) => {
+                    const draggedName = event.dataTransfer.getData('text/plain');
+                    const targetName = event.currentTarget.dataset.name;
+                    const selectedExercises = loadJSON('selectedExercises');
+                    const fromIndex = selectedExercises.indexOf(draggedName);
+                    const toIndex = selectedExercises.indexOf(targetName);
+                    const [movedExercise] = selectedExercises.splice(fromIndex, 1);
+                    selectedExercises.splice(toIndex, 0, movedExercise);
+                    saveJSON('selectedExercises', selectedExercises);
+                    openCurrentWorkoutModal();
+                });
+
                 exerciseDiv.appendChild(title);
                 const setsContainer = document.createElement('div');
                 setsContainer.className = 'sets-container';
