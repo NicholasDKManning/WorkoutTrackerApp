@@ -32,6 +32,17 @@ function saveJSON(key, value) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    // === Register the service worker on page load ===
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+                console.log('Service Worker registered with scope:', registration.scope);
+            })
+            .catch(err => {
+                console.error('Service Worker registration failed:', err);
+            });
+    }
+
     // Show "Successfully updated!" toast after reload
     if (localStorage.getItem('showUpdatedToast') === 'true') {
         localStorage.removeItem('showUpdatedToast');
