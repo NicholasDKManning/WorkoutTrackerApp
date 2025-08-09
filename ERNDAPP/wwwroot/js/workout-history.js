@@ -34,6 +34,14 @@ document.addEventListener('DOMContentLoaded', function () {
             container.innerHTML = '<p>No Completed Workouts Have Been Logged Yet.</p>';
             return;
         }
+
+        // Sort completed workouts
+        workouts.sort((mostRecentWorkout, oldestWorkout) => {
+            const mostRecentWorkoutTime = new Date(mostRecentWorkout.startTime || 0).getTime();
+            const oldestWorkoutTime = new Date(oldestWorkout.startTime || 0).getTime();
+            return oldestWorkoutTime - mostRecentWorkoutTime; // Order from most recent to oldest
+        });
+
         workouts.forEach((workout, index) => {
             const card = document.createElement('div');
             card.className = 'workout-card';
