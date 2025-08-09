@@ -1,9 +1,7 @@
 🏋️ ERND - Progressive Workout Tracker (MVP)
 ERND is my first full-stack mobile-style fitness web app designed to help users track and log their workouts in detail. It includes features like user authentication, wokrout logging, history tracking, and more. This app provides an intuitive, clean, and responsive interface for fitness enthusiasts looking for a simple way to track their workouts.
 
-=====================
-VISIT ERND: ernd.app
-=====================
+VISIT ERND: https://ernd.app
 
 🛠️ Tech Stack
 Frontend: 
