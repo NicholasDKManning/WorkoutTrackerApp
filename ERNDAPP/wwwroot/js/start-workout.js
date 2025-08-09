@@ -38,7 +38,7 @@
 
             const instruction = document.createElement('div');
             instruction.className = 'reorder-instruction';
-            instruction.textContent = 'You may now reorder exercises by dragging near the exercise name';
+            instruction.textContent = 'Click/Tap & hold to drag. Drag upward/downward over another exercise to reorder.';
             exerciseWorkoutList.appendChild(instruction);
 
             const SCROLL_EDGE_THRESHOLD = 80; // px
