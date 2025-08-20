@@ -1,5 +1,5 @@
 // service-worker.js
-const CACHE_VERSION = 'ernd-cache-v2'; // To force updates change v#
+const CACHE_VERSION = 'ernd-cache-v08-19-25-0'; // To force updates change version # as such: vDD-MM-YY-#
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames =>

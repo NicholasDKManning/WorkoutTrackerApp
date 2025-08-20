@@ -4,6 +4,13 @@
 
 <div id="exerciseList" class="exercise-list">
 
+    @if (User?.Identity != null && User.Identity.IsAuthenticated)
+    {
+        <button id="addCustomExerciseBtn" type="button">
+            + Add Custom Exercise
+        </button>
+    }
+
     <!-- Chest -->
     <details>
         <summary>Chest</summary>
@@ -107,7 +114,8 @@
             "Lying Leg Curl",
             "Leg Extension",
             "Goblet Squat",
-            "Step-ups" })
+            "Step-ups",
+            "Seated Calf-Raises" })
 
         {
             if (readOnly)
@@ -238,7 +246,11 @@
 
             "Lateral Bounds",
             "Broad Jumps",
-            "Jump Squats" })
+            "Jump Squats",
+            "Box Jumps",
+            "Single-Leg Box Jumps",
+            "Calf Raises",
+            "Depth Jumps" })
 
         {
             if (readOnly)
